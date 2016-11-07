@@ -1,10 +1,12 @@
 module GameOfLife.State exposing (init, update, subscriptions)
 
 import GameOfLife.Types exposing(..)
+import GameOfLife.IO exposing(..)
 
 import Phoenix
 import Phoenix.Socket as Socket
 import Phoenix.Channel as Channel
+import Json.Decode as JD exposing (decodeValue)
 
 -- MODEL
 
@@ -15,7 +17,7 @@ init =
 model : Model
 model =
   { channelState = Disconnected
-  , board = {id = -1}
+  , board = {id = -1, generationNumber = 1}
   }
 
 -- UPDATE
@@ -39,13 +41,13 @@ update msg model =
       LeaveChannel ->
         ({model | channelState = Disconnecting}, Cmd.none)
 
-      ReceiveBoardUpdate raw -> (model, Cmd.none)
-          -- case JD.decodeValue roverUpdateDecoder raw of
-          --   Ok rover ->
-          --     ({model | rovers = updateRovers rover model.rovers}, Cmd.none)
-          --
-          --   Err error ->
-          --       ( model, Cmd.none )
+      ReceiveBoardUpdate raw ->
+          case JD.decodeValue boardUpdateDecoder raw of
+            Ok board ->
+              ({model | board = board}, Cmd.none)
+
+            Err error ->
+                ( model, Cmd.none )
 
 -- SUBSCRIPTIONS
 
@@ -58,8 +60,8 @@ subscriptions model =
 
 channel : Channel.Channel Msg
 channel =
-  Channel.init "plateau:public"
-  |> Channel.on "rover:update" ReceiveBoardUpdate
+  Channel.init "board:public"
+  |> Channel.on "board:update" ReceiveBoardUpdate
   |> Channel.onJoin  (\_ -> UpdateState Connected)
   |> Channel.onLeave (\_ -> UpdateState Disconnected)
 

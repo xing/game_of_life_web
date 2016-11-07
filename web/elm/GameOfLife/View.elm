@@ -9,7 +9,7 @@ import Html.Attributes exposing (..)
 view : Model -> Html Msg
 view model =
   div []
-    [ div [ class "board" ] [ text "Board" ]
+    [ div [ class "board" ] [ text ("Board " ++ toString(model.board.generationNumber)) ]
     , connectButtonView model.channelState
     ]
 

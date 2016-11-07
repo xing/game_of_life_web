@@ -1,8 +1,8 @@
 defmodule GameOfLifeWeb.UserSocket do
   use Phoenix.Socket
-
+  require Logger
   ## Channels
-  # channel "room:*", GameOfLifeWeb.RoomChannel
+  channel "board:*", GameOfLifeWeb.BoardChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -19,7 +19,8 @@ defmodule GameOfLifeWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
+  def connect(params, socket) do
+    Logger.info("connect: #{inspect params}")
     {:ok, socket}
   end
 

@@ -22,4 +22,5 @@ type Msg
 
 type alias Board =
   { id : Int
+  , generationNumber : Int
   }
