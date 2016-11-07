@@ -17,7 +17,9 @@ defmodule GameOfLifeWeb do
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: GameOfLifeWeb.Supervisor]
-    Supervisor.start_link(children, opts)
+    context = Supervisor.start_link(children, opts)
+    spawn &GameOfLifeWeb.DummyBoard.run/0
+    context
   end
 
   # Tell Phoenix to update the endpoint configuration
