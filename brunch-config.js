@@ -42,7 +42,8 @@ exports.config = {
     // Dependencies and current project directories to watch
     watched: [
       "web/static",
-      "test/static"
+      "test/static",
+      "web/elm",
     ],
 
     // Where to compile files to
@@ -51,6 +52,26 @@ exports.config = {
 
   // Configure your plugins
   plugins: {
+    sass: {
+      options: {
+        includePaths: [
+          "node_modules/bootstrap-sass/assets/stylesheets",
+          "node_modules/font-awesome/scss"
+        ], // tell sass-brunch where to look for files to @import to avoid specifying whole path
+        precision: 8 // minimum precision required by bootstrap-sass
+        }
+      },
+    copycat: {
+      "fonts": [
+        "node_modules/bootstrap-sass/assets/fonts",
+        "node_modules/font-awesome/fonts",
+        ] // copy node_modules/bootstrap-sass/assets/fonts/bootstrap/* to priv/static/fonts/
+    },
+    elmBrunch: {
+          elmFolder: "web/elm",
+          mainModules: ["App.elm"],
+          outputFolder: "../static/vendor"
+        },
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
