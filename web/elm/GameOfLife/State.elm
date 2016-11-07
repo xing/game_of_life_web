@@ -17,17 +17,17 @@ init =
 model : Model
 model =
   { channelState = Disconnected
-  , board = {id = -1, generationNumber = 1}
+  , board = {generationNumber = 1, size = (10, 10), aliveCells = []}
   }
 
 -- UPDATE
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  -- let
-  --   msg = Debug.log "msg=" msg
-  --   model = Debug.log "model=" model
-  -- in
+  let
+    msg = Debug.log "msg=" msg
+    model = Debug.log "model=" model
+  in
     case msg of
       NoOp ->
         (model, Cmd.none)
@@ -41,8 +41,8 @@ update msg model =
       LeaveChannel ->
         ({model | channelState = Disconnecting}, Cmd.none)
 
-      ReceiveBoardUpdate raw ->
-          case JD.decodeValue boardUpdateDecoder raw of
+      ReceiveBoardUpdate json ->
+          case JD.decodeValue boardUpdateDecoder json of
             Ok board ->
               ({model | board = board}, Cmd.none)
 

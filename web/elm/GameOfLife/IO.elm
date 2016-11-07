@@ -6,6 +6,11 @@ import Json.Decode as JD exposing ((:=))
 
 boardUpdateDecoder : JD.Decoder Board
 boardUpdateDecoder =
-    JD.object2 Board
-        ("id" := JD.int)
-        ("generationNumber"  := JD.int)
+    JD.object3 Board
+        ("generationNumber" := JD.int)
+        ("size" := pointDecoder)
+        ("aliveCells" := JD.list pointDecoder)
+
+pointDecoder : JD.Decoder Point
+pointDecoder =
+  JD.tuple2 (,) JD.int JD.int

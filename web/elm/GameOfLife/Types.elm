@@ -7,6 +7,9 @@ type alias Model =
   , board : Board
   }
 
+type alias Point =
+  (Int, Int)
+
 type ChannelState
     = Connecting
     | Connected
@@ -21,6 +24,7 @@ type Msg
       | ReceiveBoardUpdate JE.Value
 
 type alias Board =
-  { id : Int
-  , generationNumber : Int
+  { generationNumber : Int
+  , size : Point
+  , aliveCells : List Point
   }
