@@ -30,6 +30,8 @@ type Msg
       | ReceiveBoardUpdate JE.Value
       | ReceiveTickerUpdate JE.Value
       | ReceiveChannelJoin JE.Value
+      | StopTicker
+      | StartTicker
 
 type alias Ticker =
     { state : TickerState
@@ -40,6 +42,8 @@ type alias Ticker =
 type TickerState
     = Started
     | Stopped
+    | RequestingStop
+    | RequestingStart
     | Unknown
 
 type alias Board =

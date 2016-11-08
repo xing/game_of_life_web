@@ -6,6 +6,7 @@ import GameOfLife.IO exposing(..)
 import Phoenix
 import Phoenix.Socket as Socket
 import Phoenix.Channel as Channel
+import Phoenix.Push as Push
 import Json.Decode as JD exposing (decodeValue)
 
 -- MODEL
@@ -67,6 +68,24 @@ update msg model =
             Err error ->
                 ( model, Cmd.none )
 
+      StopTicker ->
+        let
+          push = Push.init "board:public" "ticker:stop"
+        in
+          ({model | ticker = updateTickerState RequestingStop model.ticker},
+            Phoenix.push (socketName model.flags.host) push)
+
+      StartTicker ->
+        let
+          push = Push.init "board:public" "ticker:start"
+        in
+          ({model | ticker = updateTickerState RequestingStart model.ticker},
+            Phoenix.push (socketName model.flags.host) push)
+
+updateTickerState : TickerState -> Ticker -> Ticker
+updateTickerState tickerState ticker =
+  {ticker | state = tickerState}
+
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
@@ -83,8 +102,13 @@ channel =
   |> Channel.on "ticker:update" ReceiveTickerUpdate
   |> Channel.onJoin ReceiveChannelJoin
   |> Channel.onLeave (\_ -> UpdateState Disconnected)
+  |> Channel.withDebug
 
 
 socket : String -> Socket.Socket
 socket host =
-  Socket.init ("ws://" ++ host ++  "/socket/websocket")
+  Socket.init (socketName host)
+
+socketName : String -> String
+socketName host =
+  "ws://" ++ host ++  "/socket/websocket"

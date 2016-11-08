@@ -68,6 +68,8 @@ buttonClass state =
 tickerButton : TickerState -> Html Msg
 tickerButton state =
   case state of
-    Unknown -> button [class "hide"] []
-    Started -> button [ class "btn btn-danger" ] [text "Stop"]
-    Stopped -> button [ class "btn btn-success" ] [text "Start"]
+    Started -> button [ class "btn btn-danger", onClick StopTicker ] [text "Stop"]
+    RequestingStop -> button [ class "btn btn-warning", onClick StopTicker ] [text "Requesting stop"]
+    Stopped -> button [ class "btn btn-success", onClick StartTicker ] [text "Start"]
+    RequestingStart -> button [ class "btn btn-warning", onClick StartTicker ] [text "Requesting start"]
+    _       -> button [ class "hide" ] []
