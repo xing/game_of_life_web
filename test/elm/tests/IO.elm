@@ -2,6 +2,7 @@ module IO exposing (..)
 import Test exposing (..)
 import Expect
 import GameOfLife.IO as IO
+import GameOfLife.Types exposing (..)
 import Json.Decode
 
 type DecoderTest output
@@ -15,6 +16,11 @@ all =
           [ Pass "Minimum valid" { generationNumber = 5, size = (5,6), aliveCells = [] } """ {"generationNumber": 5, "size": [5,6], "aliveCells": []} """
           , Pass "With aliveCells" { generationNumber = 5, size = (5,6), aliveCells = [(3,4), (2,3)] } """ {"generationNumber": 5, "size": [5,6], "aliveCells": [[3,4],[2,3]]} """
           , Fail "Missing field" """ {"size": [5,6], "aliveCells": []} """
+          ]
+        , testDecoder IO.tickerUpdateDecoder
+          [ Pass "Ticker started" { state = Started, interval = 10 } """ {"started": true, "interval": 10} """
+          , Pass "Ticker stopped" { state = Stopped, interval = 10 } """ {"started": false, "interval": 10} """
+          , Fail "Missing field" """ {"started": false} """
           ]
         ]
 

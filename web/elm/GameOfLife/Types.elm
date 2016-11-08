@@ -4,6 +4,7 @@ import Json.Encode as JE
 
 type alias Model =
   { channelState : ChannelState
+  , ticker : Ticker
   , board : Board
   }
 
@@ -22,6 +23,18 @@ type Msg
       | JoinChannel
       | LeaveChannel
       | ReceiveBoardUpdate JE.Value
+      | ReceiveTickerUpdate JE.Value
+
+type alias Ticker =
+    { state : TickerState
+    , interval : Int
+    }
+
+
+type TickerState
+    = Started
+    | Stopped
+    | Unknown
 
 type alias Board =
   { generationNumber : Int

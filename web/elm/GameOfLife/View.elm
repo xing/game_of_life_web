@@ -9,17 +9,24 @@ import Html.Attributes exposing (..)
 view : Model -> Html Msg
 view model =
   div []
-    [ connectButtonView model.channelState
+    [ controlPanel model
     , boardView model.board
     ]
 
+controlPanel : Model -> Html Msg
+controlPanel model =
+  div [ class "row" ]
+    [ div [ class "col-md-2" ] [text ("generationNumber " ++ (toString model.board.generationNumber))]
+    , div [ class "col-md-2" ] [ connectButtonView model.channelState ]
+    , div [ class "col-md-8" ] [tickerButton model.ticker.state ]]
+
 boardView : Board -> Html Msg
 boardView board =
-  div [ class "boardContainer" ]
-    [ div [] [text ("generationNumber " ++ (toString board.generationNumber)) ]
-    , div [ class "board", boardStyle board.size]
-        (aliveCellsView board.aliveCells)
-    ]
+  div [ class "row"]
+    [div [ class "boardContainer col-md-12" ]
+      [ div [ class "board", boardStyle board.size]
+          (aliveCellsView board.aliveCells)
+      ]]
 
 aliveCellsView : List Point -> List (Html Msg)
 aliveCellsView aliveCells =
@@ -36,7 +43,7 @@ aliveCellView : Point -> Html Msg
 aliveCellView cell =
   i [class "cell fa fa-bug", cellStyle cell] []
 
-cellStyle : Point -> Attribute msg
+cellStyle : Point -> Attribute Msg
 cellStyle (x,y) =
   style
     [ ("bottom", toString(y) ++ "em")
@@ -57,3 +64,10 @@ buttonClass state =
           Disconnected  -> "btn btn-success"
           Connected     -> "btn btn-danger"
           _             -> "btn btn-warning")
+
+tickerButton : TickerState -> Html Msg
+tickerButton state =
+  case state of
+    Unknown -> button [class "hide"] []
+    Started -> button [] [text "Stop"]
+    Stopped -> button [] [text "Start"]
