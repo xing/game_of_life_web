@@ -59,6 +59,14 @@ update msg model =
             Err error ->
                 ( model, Cmd.none )
 
+      ReceiveChannelJoin json ->
+          case JD.decodeValue tickerUpdateDecoder json of
+            Ok ticker ->
+              ({model | ticker = ticker, channelState = Connected }, Cmd.none)
+
+            Err error ->
+                ( model, Cmd.none )
+
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
@@ -73,8 +81,9 @@ channel =
   Channel.init "board:public"
   |> Channel.on "board:update" ReceiveBoardUpdate
   |> Channel.on "ticker:update" ReceiveTickerUpdate
-  |> Channel.onJoin  (\_ -> UpdateState Connected)
+  |> Channel.onJoin ReceiveChannelJoin
   |> Channel.onLeave (\_ -> UpdateState Disconnected)
+
 
 socket : String -> Socket.Socket
 socket host =

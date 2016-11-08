@@ -29,6 +29,7 @@ type Msg
       | LeaveChannel
       | ReceiveBoardUpdate JE.Value
       | ReceiveTickerUpdate JE.Value
+      | ReceiveChannelJoin JE.Value
 
 type alias Ticker =
     { state : TickerState

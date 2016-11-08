@@ -4,7 +4,7 @@ defmodule GameOfLifeWeb.BoardChannel do
 
   def join("board:public", message, socket) do
     Logger.info "join board: #{inspect message}"
-    {:ok, socket}
+    {:ok, %{started: true, interval: 10}, socket}
   end
   def join("board:" <> _private_room_id, _params, _socket) do
     {:error, %{reason: "unauthorized"}}
