@@ -17,6 +17,7 @@ init flags =
 model : Flags -> Model
 model flags =
   { flags = flags
+  , ticker = {state = Unknown, interval = 0}
   , channelState = Disconnected
   , board = {generationNumber = 1, size = (10, 10), aliveCells = []}
   }
@@ -50,6 +51,14 @@ update msg model =
             Err error ->
                 ( model, Cmd.none )
 
+      ReceiveTickerUpdate json ->
+          case JD.decodeValue tickerUpdateDecoder json of
+            Ok ticker ->
+              ({model | ticker = ticker}, Cmd.none)
+
+            Err error ->
+                ( model, Cmd.none )
+
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
@@ -63,6 +72,7 @@ channel : Channel.Channel Msg
 channel =
   Channel.init "board:public"
   |> Channel.on "board:update" ReceiveBoardUpdate
+  |> Channel.on "ticker:update" ReceiveTickerUpdate
   |> Channel.onJoin  (\_ -> UpdateState Connected)
   |> Channel.onLeave (\_ -> UpdateState Disconnected)
 
