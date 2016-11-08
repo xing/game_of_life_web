@@ -16,7 +16,7 @@ view model =
 boardView : Board -> Html Msg
 boardView board =
   div [ class "board" ]
-    [ div [] [text ("generateionNumber " ++ (toString board.generationNumber)) ]
+    [ div [] [text ("generationNumber " ++ (toString board.generationNumber)) ]
     , div [] [text ("size " ++ (toString board.size))]
     , aliveCellsView board.aliveCells
     ]
@@ -28,7 +28,7 @@ aliveCellsView aliveCells =
 
 aliveCellView : Point -> Html Msg
 aliveCellView cell =
-  i [class "fa fa-arrow-up"] [text (toString cell)]
+  i [class "fa fa-bug"] [text (toString cell)]
 
 connectButtonView : ChannelState -> Html Msg
 connectButtonView state =

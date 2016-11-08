@@ -18,7 +18,7 @@ defmodule GameOfLifeWeb do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: GameOfLifeWeb.Supervisor]
     context = Supervisor.start_link(children, opts)
-    spawn &GameOfLifeWeb.DummyBoard.run/0
+    spawn(fn -> GameOfLifeWeb.DummyBoard.run(10) end)
     context
   end
 

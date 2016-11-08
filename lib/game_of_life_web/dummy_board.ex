@@ -3,11 +3,24 @@ defmodule GameOfLifeWeb.DummyBoard do
   alias GameOfLifeWeb.EncodedBoard
 
 
-  def run(), do: run(%Board{size: {10,10}, alive_cells: [{1,1}, {5,3}]})
+  def run(num_rand_cells), do: run(%Board{size: {10,10}, alive_cells: [{1,1}, {5,3}]}, num_rand_cells)
 
-  def run(board) do
+  def run(board, num_rand_cells) do
     GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", EncodedBoard.encode(board)
     :timer.sleep(1000)
-    run(%Board{ board | generation_number: board.generation_number + 1})
+    run(%Board{ board | generation_number: board.generation_number + 1,
+      alive_cells: random_cells(board.size, num_rand_cells)}, num_rand_cells)
+  end
+
+  def random_cells(size, num_rand_cells) when num_rand_cells == 0 do
+    []
+  end
+
+  def random_cells(size, num_rand_cells) when num_rand_cells >= 0 do
+    [random_cell(size)] ++ random_cells(size, num_rand_cells - 1)
+  end
+
+  def random_cell({width, height}) do
+    {Enum.random(0..width - 1), Enum.random(0..height - 1)}
   end
 end
