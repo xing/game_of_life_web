@@ -3,9 +3,14 @@ module GameOfLife.Types exposing (..)
 import Json.Encode as JE
 
 type alias Model =
-  { channelState : ChannelState
+  { flags : Flags
+  , channelState : ChannelState
   , ticker : Ticker
   , board : Board
+  }
+
+type alias Flags =
+  { host : String
   }
 
 type alias Point =
