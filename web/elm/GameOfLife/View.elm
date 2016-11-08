@@ -9,26 +9,39 @@ import Html.Attributes exposing (..)
 view : Model -> Html Msg
 view model =
   div []
-    [ boardView model.board
-    , connectButtonView model.channelState
+    [ connectButtonView model.channelState
+    , boardView model.board
     ]
 
 boardView : Board -> Html Msg
 boardView board =
-  div [ class "board" ]
+  div [ class "boardContainer" ]
     [ div [] [text ("generationNumber " ++ (toString board.generationNumber)) ]
-    , div [] [text ("size " ++ (toString board.size))]
-    , aliveCellsView board.aliveCells
+    , div [ class "board", boardStyle board.size]
+        (aliveCellsView board.aliveCells)
     ]
 
-aliveCellsView : List Point -> Html Msg
+aliveCellsView : List Point -> List (Html Msg)
 aliveCellsView aliveCells =
-  div []
-    (List.map aliveCellView aliveCells)
+    List.map aliveCellView aliveCells
+
+boardStyle : Point -> Attribute Msg
+boardStyle (x,y) =
+  style
+    [ ("width", toString(x) ++ "em")
+    , ("height", toString(y) ++ "em")
+    ]
 
 aliveCellView : Point -> Html Msg
 aliveCellView cell =
-  i [class "fa fa-bug"] [text (toString cell)]
+  i [class "cell fa fa-bug", cellStyle cell] []
+
+cellStyle : Point -> Attribute msg
+cellStyle (x,y) =
+  style
+    [ ("bottom", toString(y) ++ "em")
+    , ("left", toString(x) ++ "em")
+    ]
 
 connectButtonView : ChannelState -> Html Msg
 connectButtonView state =

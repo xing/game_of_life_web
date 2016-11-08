@@ -1,3 +1,14 @@
 /* This file is for your main application css. */
 @import "bootstrap"; /* imports node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss */
 @import "font-awesome";
+
+.board {
+  position: relative;
+  margin: 20px;
+  border: 1px black solid;
+  font-size: 20px;
+
+  .cell {
+    position: absolute;
+  }
+}
