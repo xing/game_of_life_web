@@ -33,7 +33,14 @@ aliveCellView cell =
 connectButtonView : ChannelState -> Html Msg
 connectButtonView state =
   case state of
-    Disconnected  -> button [ onClick JoinChannel ]   [ text "Connect" ]
-    Connected     -> button [ onClick LeaveChannel ]  [ text "Disconnect" ]
-    Connecting    -> button [] [ text "Connecting.." ]
-    Disconnecting -> button [] [ text "Disonnecting.." ]
+    Disconnected  -> button [ onClick JoinChannel, buttonClass state ]   [ text "Connect" ]
+    Connected     -> button [ onClick LeaveChannel, buttonClass state ]  [ text "Disconnect" ]
+    Connecting    -> button [ buttonClass state ] [ text "Connecting.." ]
+    Disconnecting -> button [ buttonClass state ] [ text "Disonnecting.." ]
+
+buttonClass : ChannelState -> Attribute Msg
+buttonClass state =
+  class (case state of
+          Disconnected  -> "btn btn-success"
+          Connected     -> "btn btn-danger"
+          _             -> "btn btn-warning")
