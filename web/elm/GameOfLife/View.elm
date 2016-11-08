@@ -17,8 +17,8 @@ controlPanel : Model -> Html Msg
 controlPanel model =
   div [ class "row" ]
     [ div [ class "col-md-2" ] [text ("generationNumber " ++ (toString model.board.generationNumber))]
-    , div [ class "col-md-2" ] [ connectButtonView model.channelState ]
-    , div [ class "col-md-8" ] [tickerButton model.ticker.state ]]
+    , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
+    , div [ class "col-md-9" ] [tickerButton model.ticker.state ]]
 
 boardView : Board -> Html Msg
 boardView board =
@@ -69,5 +69,5 @@ tickerButton : TickerState -> Html Msg
 tickerButton state =
   case state of
     Unknown -> button [class "hide"] []
-    Started -> button [] [text "Stop"]
-    Stopped -> button [] [text "Start"]
+    Started -> button [ class "btn btn-danger" ] [text "Stop"]
+    Stopped -> button [ class "btn btn-success" ] [text "Start"]
