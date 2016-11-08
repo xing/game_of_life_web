@@ -10,13 +10,14 @@ import Json.Decode as JD exposing (decodeValue)
 
 -- MODEL
 
-init : (Model, Cmd Msg)
-init =
-  (model, Cmd.none)
+init : Flags -> (Model, Cmd Msg)
+init flags =
+  (model flags, Cmd.none)
 
-model : Model
-model =
-  { channelState = Disconnected
+model : Flags -> Model
+model flags =
+  { flags = flags
+  , channelState = Disconnected
   , board = {generationNumber = 1, size = (10, 10), aliveCells = []}
   }
 
@@ -54,9 +55,9 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   case model.channelState of
-    Connecting    -> Phoenix.connect socket [channel]
-    Connected     -> Phoenix.connect socket [channel]
-    _             -> Phoenix.connect socket []
+    Connecting    -> Phoenix.connect (socket model.flags.host) [channel]
+    Connected     -> Phoenix.connect (socket model.flags.host) [channel]
+    _             -> Phoenix.connect (socket model.flags.host) []
 
 channel : Channel.Channel Msg
 channel =
@@ -65,6 +66,6 @@ channel =
   |> Channel.onJoin  (\_ -> UpdateState Connected)
   |> Channel.onLeave (\_ -> UpdateState Disconnected)
 
-socket : Socket.Socket
-socket =
-  Socket.init "ws://localhost:4000/socket/websocket"
+socket : String -> Socket.Socket
+socket host =
+  Socket.init ("ws://" ++ host ++  "/socket/websocket")
