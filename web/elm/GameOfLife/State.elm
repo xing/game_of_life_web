@@ -8,6 +8,7 @@ import Phoenix.Socket as Socket
 import Phoenix.Channel as Channel
 import Phoenix.Push as Push
 import Json.Decode as JD exposing (decodeValue)
+import String
 
 -- MODEL
 
@@ -21,6 +22,7 @@ model flags =
   , ticker = {state = Unknown, interval = 0}
   , channelState = Disconnected
   , board = {generationNumber = 1, size = (10, 10), aliveCells = []}
+  , tickerSliderPosition = 10
   }
 
 -- UPDATE
@@ -80,6 +82,13 @@ update msg model =
           push = Push.init "board:public" "ticker:start"
         in
           ({model | ticker = updateTickerState RequestingStart model.ticker},
+            Phoenix.push (socketName model.flags.host) push)
+
+      UpdateTickerInterval newInterval ->
+        let
+          push = Push.init "board:public" "ticker:interval_update"
+        in
+          ({model | tickerSliderPosition = (Result.withDefault 0 (String.toInt newInterval))},
             Phoenix.push (socketName model.flags.host) push)
 
 updateTickerState : TickerState -> Ticker -> Ticker

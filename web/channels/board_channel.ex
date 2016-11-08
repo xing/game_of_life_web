@@ -17,4 +17,8 @@ defmodule GameOfLifeWeb.BoardChannel do
    {:reply, :ok, socket}
  end
 
+  def handle_in("ticker:interval_update", _, socket) do
+    Logger.info "handle_in ticker:interval_update"
+    {:reply, :ok, socket}
+  end
 end

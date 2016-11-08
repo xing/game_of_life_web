@@ -5,6 +5,7 @@ import GameOfLife.Types exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
+import Html.Attributes as H exposing (..)
 
 view : Model -> Html Msg
 view model =
@@ -18,7 +19,20 @@ controlPanel model =
   div [ class "row" ]
     [ div [ class "col-md-2" ] [text ("generationNumber " ++ (toString model.board.generationNumber))]
     , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
-    , div [ class "col-md-9" ] [tickerButton model.ticker.state ]]
+    , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
+    , div [ class "col-md-2" ]  [ (tickerSlider model.tickerSliderPosition)
+                                , text <| toString model.tickerSliderPosition ]
+    ]
+
+tickerSlider : Int -> Html  Msg
+tickerSlider tickerSliderPosition =
+  input
+    [ type' "range"
+    , H.min "100"
+    , H.max "5000"
+    , value <| toString tickerSliderPosition
+    , onInput UpdateTickerInterval
+    ] []
 
 boardView : Board -> Html Msg
 boardView board =

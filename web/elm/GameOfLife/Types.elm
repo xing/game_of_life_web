@@ -7,6 +7,7 @@ type alias Model =
   , channelState : ChannelState
   , ticker : Ticker
   , board : Board
+  , tickerSliderPosition : Int
   }
 
 type alias Flags =
@@ -32,6 +33,7 @@ type Msg
       | ReceiveChannelJoin JE.Value
       | StopTicker
       | StartTicker
+      | UpdateTickerInterval String
 
 type alias Ticker =
     { state : TickerState
