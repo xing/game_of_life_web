@@ -66,7 +66,9 @@ update msg model =
       ReceiveChannelJoin json ->
           case JD.decodeValue tickerUpdateDecoder json of
             Ok ticker ->
-              ({model | ticker = ticker, channelState = Connected }, Cmd.none)
+              ({model | ticker = ticker,
+                tickerSliderPosition = ticker.interval,
+                channelState = Connected }, Cmd.none)
 
             Err error ->
                 ( model, Cmd.none )

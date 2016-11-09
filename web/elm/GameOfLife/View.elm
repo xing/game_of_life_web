@@ -32,13 +32,13 @@ tickerSlider model =
       _ ->
         [ input
             [ type' "range"
-            , A.min "100"
-            , A.max "5000"
-            , A.step "100"
+            , A.min "0"
+            , A.max "1000"
+            , A.step "20"
             , value <| toString model.tickerSliderPosition
             , onInput UpdateTickerInterval
             ] []
-        , text <| toString model.tickerSliderPosition
+        , text <| toString model.ticker.interval
         ]
     )
 
