@@ -3,7 +3,7 @@ defmodule GameOfLifeWeb.DummyBoard do
   alias GameOfLifeWeb.EncodedBoard
 
 
-  def run(num_rand_cells), do: run(%Board{size: {60,30}, alive_cells: [{1,1}, {5,3}]}, num_rand_cells)
+  def run(num_rand_cells), do: run(%Board{size: {95,50}, alive_cells: [{1,1}, {5,3}]}, num_rand_cells)
 
   def run(board, num_rand_cells) do
     GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", EncodedBoard.encode(board)

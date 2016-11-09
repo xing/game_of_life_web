@@ -8,9 +8,10 @@
   outline-style: solid;
   outline-color: black;
   outline-width: 2px;
-  font-size: 20px;
-  background-size: 1em 1em;
-  background-image:repeating-linear-gradient(0deg, #000, #000 1px, transparent 1px, transparent 1em),repeating-linear-gradient(-90deg, #000, #000 1px, transparent 1px, transparent 1em);
+  //font-size: 200%;
+  //background-size: 1vw 1vw;
+  background-image: repeating-linear-gradient(0deg, #d9d9d9, #d9d9d9 1px, transparent 1px, transparent 1em),repeating-linear-gradient(-90deg, #d9d9d9, #d9d9d9 1px, transparent 1px, transparent 1em);
+
   .cell {
     position: absolute;
   }
@@ -18,6 +19,7 @@
 
 #elm-container {
   margin-top: 20px;
+  font-size: 1vw ;
 }
 
 .control_panel {

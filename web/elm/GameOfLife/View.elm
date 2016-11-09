@@ -49,8 +49,8 @@ aliveCellsView aliveCells =
 boardStyle : Point -> Attribute Msg
 boardStyle (x,y) =
   style
-    [ ("width", toString(x) ++ "em")
-    , ("height", toString(y) ++ "em")
+    [ ("width", toString(x) ++ "vw")
+    , ("height", toString(y) ++ "vw")
     ]
 
 aliveCellView : Point -> Html Msg
@@ -60,8 +60,8 @@ aliveCellView cell =
 cellStyle : Point -> Attribute Msg
 cellStyle (x,y) =
   style
-    [ ("bottom", toString(y) ++ "em")
-    , ("left", toString(x) ++ "em")
+    [ ("bottom", toString(y) ++ "vw")
+    , ("left", toString(x) ++ "vw")
     ]
 
 connectButtonView : ChannelState -> Html Msg
