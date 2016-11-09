@@ -1,4 +1,4 @@
-module GameOfLife.State exposing (init, update, subscriptions)
+port module GameOfLife.State exposing (init, update, subscriptions)
 
 import GameOfLife.Types exposing(..)
 import GameOfLife.IO exposing(..)
@@ -22,11 +22,14 @@ model flags =
   { flags = flags
   , ticker = {state = Unknown, interval = 0}
   , channelState = Disconnected
-  , board = {generation = 1, size = (10, 10), aliveCells = []}
+  , board = {generation = 1, size = (60, 30), aliveCells = []}
   , tickerSliderPosition = 100
+  , controlPanelMenuState = Hidden
   }
 
 -- UPDATE
+
+port requestFullScreen : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -93,6 +96,16 @@ update msg model =
         in
           ({model | tickerSliderPosition = newIntervalInt},
             Phoenix.push (socketName model.flags.host) push)
+
+      UpdateControlPanelMenu controlPanelMenuState ->
+        case controlPanelMenuState of
+          Displayed -> ({model | controlPanelMenuState = Hidden}, Cmd.none)
+          Hidden -> ({model | controlPanelMenuState = Displayed}, Cmd.none)
+
+      ToFullScreenClicked ->
+        (model, requestFullScreen "on")
+
+
 
 updateTickerState : TickerState -> Ticker -> Ticker
 updateTickerState tickerState ticker =

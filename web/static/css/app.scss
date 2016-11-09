@@ -16,3 +16,52 @@
 #elm-container {
   margin-top: 20px;
 }
+
+.control_panel {
+  height: 0px;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #dde;
+  overflow-y: hidden;
+  transition: 0.5s;
+
+  .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+}
+
+#menu_icon {
+  margin-left: 30px;
+}
+
+.pointer {
+  cursor:pointer
+}
+
+.no_height {
+  height: 0px;
+}
+
+.with_height {
+  height: 59px;
+}
+
+.marginLeft15 {
+  margin-left: 15px;
+}
+
+#actions {
+  padding-top: 14px;
+
+  .gen_number {
+    padding-left: 34px;
+    margin-top: 5px;
+  }
+}

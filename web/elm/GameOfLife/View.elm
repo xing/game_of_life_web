@@ -16,11 +16,11 @@ view model =
 controlPanel : Model -> Html Msg
 controlPanel model =
   div [ class "row" ]
-    [ div [ class "col-md-2" ] [text ("Generation: " ++ (toString model.board.generation))]
-    , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
-    , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
-    , div [ class "col-md-2" ]  [ (tickerSlider model.tickerSliderPosition)
-                                , text <| toString model.tickerSliderPosition ]
+    [ controlPanelMenuView model,
+      div [] [
+        span [ id "menu_icon", class "pointer fa fa-bars", onClick (UpdateControlPanelMenu model.controlPanelMenuState) ] []
+        , span [ id "fullscreen_button", class "fa fa-arrows-alt pointer marginLeft15", onClick ToFullScreenClicked ] []
+      ]
     ]
 
 tickerSlider : Int -> Html  Msg
@@ -87,3 +87,21 @@ tickerButton state =
     Stopped -> button [ class "btn btn-success", onClick StartTicker ] [text "Start"]
     RequestingStart -> button [ class "btn btn-warning", onClick StartTicker ] [text "Requesting start"]
     _       -> button [ class "hide" ] []
+
+controlPanelMenuView : Model -> Html Msg
+controlPanelMenuView model =
+  div [ class ("control_panel " ++ (controlPanelMenuClass model.controlPanelMenuState)) ] [
+      div [ id "actions" ] [ div [ class "col-md-2 gen_number" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
+                            , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
+                            , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
+                            , div [ class "col-md-2" ]  [ (tickerSlider model.tickerSliderPosition)
+                                                        , text <| toString model.tickerSliderPosition ]
+                           ]
+      , div [ class "col-md-5" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
+      ]
+
+controlPanelMenuClass : ControlPanelMenuState -> String
+controlPanelMenuClass controlPanelMenuState =
+  case controlPanelMenuState of
+    Displayed -> "with_height"
+    Hidden -> "no_height"

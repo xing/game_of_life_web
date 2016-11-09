@@ -8,6 +8,7 @@ type alias Model =
   , ticker : Ticker
   , board : Board
   , tickerSliderPosition : Int
+  , controlPanelMenuState : ControlPanelMenuState
   }
 
 type alias Flags =
@@ -34,12 +35,13 @@ type Msg
       | StopTicker
       | StartTicker
       | UpdateTickerInterval String
+      | UpdateControlPanelMenu ControlPanelMenuState
+      | ToFullScreenClicked
 
 type alias Ticker =
     { state : TickerState
     , interval : Int
     }
-
 
 type TickerState
     = Started
@@ -47,6 +49,10 @@ type TickerState
     | RequestingStop
     | RequestingStart
     | Unknown
+
+type ControlPanelMenuState
+    = Displayed
+    | Hidden
 
 type alias Board =
   { generation : Int

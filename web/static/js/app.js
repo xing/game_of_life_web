@@ -22,3 +22,8 @@ import "phoenix_html"
 // Set up our Elm App
 const elmDiv = document.querySelector('#elm-container');
 const elmApp = Elm.App.embed(elmDiv, {host: window.location.host});
+
+elmApp.ports.requestFullScreen.subscribe(function(status) {
+    console.log("event received from ELM...");
+    document.querySelector('#elm-container').webkitRequestFullscreen();
+});
