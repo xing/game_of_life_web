@@ -4,8 +4,7 @@ import GameOfLife.Types exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing (..)
-import Html.Attributes as H exposing (..)
+import Html.Attributes as A exposing (..)
 
 view : Model -> Html Msg
 view model =
@@ -28,8 +27,9 @@ tickerSlider : Int -> Html  Msg
 tickerSlider tickerSliderPosition =
   input
     [ type' "range"
-    , H.min "100"
-    , H.max "5000"
+    , A.min "100"
+    , A.max "5000"
+    , A.step "100"
     , value <| toString tickerSliderPosition
     , onInput UpdateTickerInterval
     ] []
