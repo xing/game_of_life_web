@@ -9,16 +9,19 @@ defmodule GameOfLifeWeb.BoardChannel do
 
   def handle_in("ticker:stop", _, socket) do
    Logger.info "handle_in ticker:stop"
+   GameOfLife.Ticker.stop_ticker
    {:reply, :ok, socket}
  end
 
  def handle_in("ticker:start", _, socket) do
    Logger.info "handle_in ticker:start"
+   GameOfLife.Ticker.start_ticker
    {:reply, :ok, socket}
  end
 
-  def handle_in("ticker:interval_update", _, socket) do
-    Logger.info "handle_in ticker:interval_update"
+  def handle_in("ticker:interval_update", %{"newInterval" => new_interval}, socket) do
+    Logger.info "handle_in ticker:interval_update new_interval: #{inspect new_interval}"
+    GameOfLife.Ticker.set_interval(new_interval)
     {:reply, :ok, socket}
   end
 end

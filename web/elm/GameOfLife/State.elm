@@ -9,6 +9,7 @@ import Phoenix.Channel as Channel
 import Phoenix.Push as Push
 import Json.Decode as JD exposing (decodeValue)
 import String
+import Json.Encode as JE
 
 -- MODEL
 
@@ -86,9 +87,11 @@ update msg model =
 
       UpdateTickerInterval newInterval ->
         let
+          newIntervalInt = Result.withDefault 0 (String.toInt newInterval)
           push = Push.init "board:public" "ticker:interval_update"
+          |> Push.withPayload (JE.object [ ( "newInterval", JE.int newIntervalInt) ])
         in
-          ({model | tickerSliderPosition = (Result.withDefault 0 (String.toInt newInterval))},
+          ({model | tickerSliderPosition = newIntervalInt},
             Phoenix.push (socketName model.flags.host) push)
 
 updateTickerState : TickerState -> Ticker -> Ticker
