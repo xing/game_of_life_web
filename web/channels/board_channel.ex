@@ -31,6 +31,10 @@ defmodule GameOfLifeWeb.BoardChannel do
     GameOfLifeWeb.Endpoint.broadcast! "board:public", "ticker:update", encode(ticker)
   end
 
+  def broadcast_board_update(board) do
+    GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", GameOfLifeWeb.EncodedBoard.encode(board)
+  end
+
   @doc "Encodes the object as required for the browser"
   def encode(%Ticker{ticker_state: ticker_state, interval: interval}) do
     %{started: ticker_state == :started, interval: interval}
