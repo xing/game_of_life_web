@@ -9,8 +9,7 @@ defmodule GameOfLifeWeb do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(GameOfLifeWeb.Endpoint, []),
-      worker(GameOfLife.Ticker, [self])
+      supervisor(GameOfLifeWeb.Endpoint, [])
       # Start your own worker by calling: GameOfLifeWeb.Worker.start_link(arg1, arg2, arg3)
       # worker(GameOfLifeWeb.Worker, [arg1, arg2, arg3]),
     ]
