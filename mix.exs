@@ -17,7 +17,7 @@ defmodule GameOfLifeWeb.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {GameOfLifeWeb, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]]
+     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :game_of_life]]
   end
 
   # Specifies which paths to compile per environment.
