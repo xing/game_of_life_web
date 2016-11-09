@@ -16,7 +16,7 @@ view model =
 controlPanel : Model -> Html Msg
 controlPanel model =
   div [ class "row" ]
-    [ div [ class "col-md-2" ] [text ("Generation: " ++ (toString model.board.generationNumber))]
+    [ div [ class "col-md-2" ] [text ("Generation: " ++ (toString model.board.generation))]
     , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
     , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
     , div [ class "col-md-2" ]  [ (tickerSlider model.tickerSliderPosition)

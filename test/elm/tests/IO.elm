@@ -13,8 +13,8 @@ all : Test
 all =
     describe "IO"
         [ testDecoder IO.boardUpdateDecoder
-          [ Pass "Minimum valid" { generationNumber = 5, size = (5,6), aliveCells = [] } """ {"generationNumber": 5, "size": [5,6], "aliveCells": []} """
-          , Pass "With aliveCells" { generationNumber = 5, size = (5,6), aliveCells = [(3,4), (2,3)] } """ {"generationNumber": 5, "size": [5,6], "aliveCells": [[3,4],[2,3]]} """
+          [ Pass "Minimum valid" { generation = 5, size = (5,6), aliveCells = [] } """ {"generation": 5, "size": [5,6], "aliveCells": []} """
+          , Pass "With aliveCells" { generation = 5, size = (5,6), aliveCells = [(3,4), (2,3)] } """ {"generation": 5, "size": [5,6], "aliveCells": [[3,4],[2,3]]} """
           , Fail "Missing field" """ {"size": [5,6], "aliveCells": []} """
           ]
         , testDecoder IO.tickerUpdateDecoder

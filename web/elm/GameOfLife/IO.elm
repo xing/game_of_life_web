@@ -7,7 +7,7 @@ import Json.Decode as JD exposing ((:=))
 boardUpdateDecoder : JD.Decoder Board
 boardUpdateDecoder =
     JD.object3 Board
-        ("generationNumber" := JD.int)
+        ("generation" := JD.int)
         ("size" := pointDecoder)
         ("aliveCells" := JD.list pointDecoder)
 

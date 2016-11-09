@@ -49,7 +49,7 @@ type TickerState
     | Unknown
 
 type alias Board =
-  { generationNumber : Int
+  { generation : Int
   , size : Point
   , aliveCells : List Point
   }

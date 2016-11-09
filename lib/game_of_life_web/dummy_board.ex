@@ -8,7 +8,7 @@ defmodule GameOfLifeWeb.DummyBoard do
   def run(board, num_rand_cells) do
     GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", EncodedBoard.encode(board)
     :timer.sleep(100)
-    run(%Board{ board | generation_number: board.generation_number + 1,
+    run(%Board{ board | generation: board.generation + 1,
       alive_cells: random_cells(board.size, num_rand_cells)}, num_rand_cells)
   end
 

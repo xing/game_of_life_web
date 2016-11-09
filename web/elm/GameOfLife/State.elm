@@ -22,7 +22,7 @@ model flags =
   { flags = flags
   , ticker = {state = Unknown, interval = 0}
   , channelState = Disconnected
-  , board = {generationNumber = 1, size = (10, 10), aliveCells = []}
+  , board = {generation = 1, size = (10, 10), aliveCells = []}
   , tickerSliderPosition = 100
   }
 
