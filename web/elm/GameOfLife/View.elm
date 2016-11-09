@@ -19,7 +19,7 @@ controlPanel model =
     [ controlPanelMenuView model,
       div [] [
         span [ id "menu_icon", class "pointer fa fa-bars", onClick (UpdateControlPanelMenu model.controlPanelMenuState) ] []
-        , span [ id "fullscreen_button", class "fa fa-arrows-alt pointer marginLeft15", onClick ToFullScreenClicked ] []
+        , span [ id "fullscreen_button", class "fa fa-arrows-alt pointer marginRight15 pull-right", onClick ToFullScreenClicked ] []
       ]
     ]
 

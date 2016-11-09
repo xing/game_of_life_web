@@ -4,7 +4,7 @@
 
 .board {
   position: relative;
-  margin: 20px;
+  margin: 2vw;
   outline-style: solid;
   outline-color: black;
   outline-width: 2px;
@@ -18,7 +18,7 @@
 }
 
 #elm-container {
-  margin-top: 20px;
+  padding-top: 20px;
   font-size: 1vw ;
 }
 
@@ -29,7 +29,7 @@
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #dde;
+  background-color: #d9d9d9;
   overflow-y: hidden;
   transition: 0.5s;
 
@@ -43,7 +43,7 @@
 }
 
 #menu_icon {
-  margin-left: 35px;
+  margin-left: 3vw;
 }
 
 .pointer {
@@ -58,8 +58,8 @@
   height: 59px;
 }
 
-.marginLeft15 {
-  margin-left: 15px;
+.marginRight15 {
+  margin-right: 2vw;
 }
 
 #actions {
