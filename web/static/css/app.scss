@@ -5,9 +5,12 @@
 .board {
   position: relative;
   margin: 20px;
-  border: 1px black solid;
+  outline-style: solid;
+  outline-color: black;
+  outline-width: 2px;
   font-size: 20px;
-
+  background-size: 1em 1em;
+  background-image:repeating-linear-gradient(0deg, #000, #000 1px, transparent 1px, transparent 1em),repeating-linear-gradient(-90deg, #000, #000 1px, transparent 1px, transparent 1em);
   .cell {
     position: absolute;
   }
@@ -38,7 +41,7 @@
 }
 
 #menu_icon {
-  margin-left: 30px;
+  margin-left: 35px;
 }
 
 .pointer {
