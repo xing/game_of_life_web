@@ -24,7 +24,7 @@ model flags =
   , channelState = Disconnected
   , board = {generation = 1, size = (95, 50), aliveCells = []}
   , tickerSliderPosition = 100
-  , controlPanelMenuState = Hidden
+  , controlPanelMenuState = Displayed
   }
 
 -- UPDATE
@@ -40,9 +40,6 @@ update msg model =
     case msg of
       NoOp ->
         (model, Cmd.none)
-
-      UpdateState channelState ->
-        ({model | channelState = channelState}, Cmd.none)
 
       JoinChannel ->
         ({model | channelState = Connecting}, Cmd.none)
@@ -73,6 +70,9 @@ update msg model =
 
             Err error ->
                 ( model, Cmd.none )
+
+      ReceiveChannelLeave json ->
+          ({model | channelState = Disconnected, ticker = updateTickerState Unknown model.ticker}, Cmd.none)
 
       StopTicker ->
         let
@@ -126,7 +126,7 @@ channel =
   |> Channel.on "board:update" ReceiveBoardUpdate
   |> Channel.on "ticker:update" ReceiveTickerUpdate
   |> Channel.onJoin ReceiveChannelJoin
-  |> Channel.onLeave (\_ -> UpdateState Disconnected)
+  |> Channel.onLeave ReceiveChannelLeave
   |> Channel.withDebug
 
 

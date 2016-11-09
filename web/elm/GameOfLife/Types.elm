@@ -26,12 +26,12 @@ type ChannelState
 
 type Msg
       = NoOp
-      | UpdateState ChannelState
       | JoinChannel
       | LeaveChannel
       | ReceiveBoardUpdate JE.Value
       | ReceiveTickerUpdate JE.Value
       | ReceiveChannelJoin JE.Value
+      | ReceiveChannelLeave JE.Value
       | StopTicker
       | StartTicker
       | UpdateTickerInterval String

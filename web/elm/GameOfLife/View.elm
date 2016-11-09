@@ -23,16 +23,24 @@ controlPanel model =
       ]
     ]
 
-tickerSlider : Int -> Html  Msg
-tickerSlider tickerSliderPosition =
-  input
-    [ type' "range"
-    , A.min "100"
-    , A.max "5000"
-    , A.step "100"
-    , value <| toString tickerSliderPosition
-    , onInput UpdateTickerInterval
-    ] []
+tickerSlider : Model -> Html Msg
+tickerSlider model =
+  div []
+    (case model.ticker.state of
+      Unknown ->
+        []
+      _ ->
+        [ input
+            [ type' "range"
+            , A.min "100"
+            , A.max "5000"
+            , A.step "100"
+            , value <| toString model.tickerSliderPosition
+            , onInput UpdateTickerInterval
+            ] []
+        , text <| toString model.tickerSliderPosition
+        ]
+    )
 
 boardView : Board -> Html Msg
 boardView board =
@@ -94,8 +102,7 @@ controlPanelMenuView model =
       div [ id "actions" ] [ div [ class "col-md-2 gen_number" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
                             , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
                             , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
-                            , div [ class "col-md-2" ]  [ (tickerSlider model.tickerSliderPosition)
-                                                        , text <| toString model.tickerSliderPosition ]
+                            , div [ class "col-md-2" ] [ tickerSlider model ]
                            ]
       , div [ class "col-md-5" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
       ]
