@@ -100,11 +100,12 @@ controlPanelMenuView : Model -> Html Msg
 controlPanelMenuView model =
   div [ class ("control_panel " ++ (controlPanelMenuClass model.controlPanelMenuState)) ] [
       div [ id "actions" ] [ div [ class "col-md-2 gen_number" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
+                            , div [ class "col-md-1" ] [ selectBoard model.availableBoards ]
                             , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
                             , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
                             , div [ class "col-md-2" ] [ tickerSlider model ]
                            ]
-      , div [ class "col-md-5" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
+      , div [ class "col-md-4" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
       ]
 
 controlPanelMenuClass : ControlPanelMenuState -> String
@@ -112,3 +113,18 @@ controlPanelMenuClass controlPanelMenuState =
   case controlPanelMenuState of
     Displayed -> "with_height"
     Hidden -> "no_height"
+
+selectBoard : List String -> Html Msg
+selectBoard availableBoards =
+  select [ class "form-control", id "board-select", onInput OnBoardSelected ]
+    ( availableBoardsOptions availableBoards )
+
+
+
+availableBoardsOptions : List BoardId -> List (Html Msg)
+availableBoardsOptions availableBoards =
+  List.map availableBoard availableBoards
+
+availableBoard : String -> Html Msg
+availableBoard availableBoard =
+  option [] [ text availableBoard ]

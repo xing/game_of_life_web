@@ -25,6 +25,8 @@ model flags =
   , board = {generation = 1, size = (95, 50), aliveCells = []}
   , tickerSliderPosition = 100
   , controlPanelMenuState = Displayed
+  , availableBoards = ["Pick a Board", "{0,0}", "{95,50}"]
+  , selectedBoard = "Pick a Board"
   }
 
 -- UPDATE
@@ -106,6 +108,9 @@ update msg model =
 
       ToFullScreenClicked ->
         (model, requestFullScreen "on")
+
+      OnBoardSelected newSelectedBoard ->
+        ({model | selectedBoard = newSelectedBoard} , Cmd.none)
 
 
 

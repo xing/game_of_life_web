@@ -9,6 +9,8 @@ type alias Model =
   , board : Board
   , tickerSliderPosition : Int
   , controlPanelMenuState : ControlPanelMenuState
+  , availableBoards : List BoardId
+  , selectedBoard : BoardId
   }
 
 type alias Flags =
@@ -37,6 +39,7 @@ type Msg
       | UpdateTickerInterval String
       | UpdateControlPanelMenu ControlPanelMenuState
       | ToFullScreenClicked
+      | OnBoardSelected BoardId
 
 type alias Ticker =
     { state : TickerState
@@ -59,3 +62,5 @@ type alias Board =
   , size : Point
   , aliveCells : List Point
   }
+
+type alias BoardId = String
