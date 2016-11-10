@@ -64,6 +64,7 @@ type alias Board =
   { generation : Int
   , size : Point
   , aliveCells : List Point
+  , origin : Point
   }
 
 type alias BoardId = String

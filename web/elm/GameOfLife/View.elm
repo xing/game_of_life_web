@@ -47,12 +47,12 @@ boardView board =
   div [ class "row"]
     [div [ class "boardContainer col-md-12" ]
       [ div [ class "board", boardStyle board.size]
-          (aliveCellsView board.aliveCells)
+          (aliveCellsView board.aliveCells board.origin)
       ]]
 
-aliveCellsView : List Point -> List (Html Msg)
-aliveCellsView aliveCells =
-    List.map aliveCellView aliveCells
+aliveCellsView : List Point -> Point -> List (Html Msg)
+aliveCellsView aliveCells origin =
+    List.map (aliveCellView origin) aliveCells
 
 boardStyle : Point -> Attribute Msg
 boardStyle (x,y) =
@@ -61,15 +61,15 @@ boardStyle (x,y) =
     , ("height", toString(y) ++ "vw")
     ]
 
-aliveCellView : Point -> Html Msg
-aliveCellView cell =
-  i [class "cell fa fa-bug", cellStyle cell] []
+aliveCellView : Point -> Point -> Html Msg
+aliveCellView origin cell =
+  i [class "cell fa fa-bug", cellStyle origin cell] []
 
-cellStyle : Point -> Attribute Msg
-cellStyle (x,y) =
+cellStyle : Point -> Point -> Attribute Msg
+cellStyle (initial_x, initial_y) (x,y) =
   style
-    [ ("bottom", toString(y) ++ "vw")
-    , ("left", toString(x) ++ "vw")
+    [ ("bottom", toString(y - initial_y) ++ "vw")
+    , ("left", toString(x - initial_x) ++ "vw")
     ]
 
 connectButtonView : ChannelState -> Html Msg
