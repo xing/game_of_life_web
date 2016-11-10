@@ -23,13 +23,17 @@ model flags =
   { flags = flags
   , ticker = {state = Unknown, interval = 0}
   , gridChannelState = Connecting
-  , boardChannelState = Disconnected
-  , board = {generation = 1, size = (95, 50), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
+  , boardChannelState = Connecting
+  , board = initBoard
   , tickerSliderPosition = 100
   , controlPanelMenuState = Displayed
-  , availableBoards = ["Pick a Board", "0,0", "95,0"]
-  , selectedBoard = "Pick a Board"
+  , availableBoards = ["0,0","95,0","190,0","0,50","95,50","190,50","0,100","95,100","190,100"]
+  , selectedBoard = "0,0"
   }
+
+initBoard : Board
+initBoard =
+  {generation = 1, size = (95, 50), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
 
 -- UPDATE
 
@@ -37,10 +41,10 @@ port requestFullScreen : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  let
-    msg = Debug.log "msg=" msg
-    model = Debug.log "model=" model
-  in
+  -- let
+  --   msg = Debug.log "msg=" msg
+  --   model = Debug.log "model=" model
+  -- in
     case msg of
       NoOp ->
         (model, Cmd.none)
@@ -112,14 +116,17 @@ update msg model =
         (model, requestFullScreen "on")
 
       OnBoardSelected newSelectedBoard ->
-        ({model | selectedBoard = newSelectedBoard} , Cmd.none)
+        ({model | selectedBoard = newSelectedBoard, board = initBoard} , Cmd.none)
 
-      ReceiveBoardChannelJoin json ->
+      ReceiveBoardChannelJoin boardId json ->
           ({model | boardChannelState = Connected}, Cmd.none)
 
-      ReceiveBoardChannelLeave json ->
+      ReceiveBoardChannelLeave boardId json ->
+        -- Only disconnnect from selected board
+        if boardId == model.selectedBoard then
           ({model | boardChannelState = Disconnected}, Cmd.none)
-
+        else
+          (model, Cmd.none)
 
 
 updateTickerState : TickerState -> Ticker -> Ticker
@@ -159,8 +166,8 @@ boardChannel : BoardId -> Channel.Channel Msg
 boardChannel boardId =
   Channel.init ("board:" ++ boardId)
   |> Channel.on "board:update" ReceiveBoardUpdate
-  |> Channel.onJoin ReceiveBoardChannelJoin
-  |> Channel.onLeave ReceiveBoardChannelLeave
+  |> Channel.onJoin (ReceiveBoardChannelJoin boardId)
+  |> Channel.onLeave (ReceiveBoardChannelLeave boardId)
   |> Channel.withDebug
 
 socket : String -> Socket.Socket

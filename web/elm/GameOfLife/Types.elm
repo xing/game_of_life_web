@@ -42,8 +42,8 @@ type Msg
       | UpdateControlPanelMenu ControlPanelMenuState
       | ToFullScreenClicked
       | OnBoardSelected BoardId
-      | ReceiveBoardChannelJoin JE.Value
-      | ReceiveBoardChannelLeave JE.Value
+      | ReceiveBoardChannelJoin BoardId JE.Value
+      | ReceiveBoardChannelLeave BoardId JE.Value
 
 type alias Ticker =
     { state : TickerState
