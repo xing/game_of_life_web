@@ -5,7 +5,7 @@
     "license": "BSD3",
     "source-directories": [
         ".",
-        "../../../elm-phoenix/src"
+        "../elm-vendor/elm-phoenix"
     ],
     "exposed-modules": [],
     "dependencies": {
