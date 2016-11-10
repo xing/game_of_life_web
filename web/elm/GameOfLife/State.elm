@@ -21,11 +21,12 @@ model : Flags -> Model
 model flags =
   { flags = flags
   , ticker = {state = Unknown, interval = 0}
-  , channelState = Disconnected
+  , gridChannelState = Connecting
+  , boardChannelState = Disconnected
   , board = {generation = 1, size = (95, 50), aliveCells = []}
   , tickerSliderPosition = 100
   , controlPanelMenuState = Displayed
-  , availableBoards = ["Pick a Board", "{0,0}", "{95,50}"]
+  , availableBoards = ["Pick a Board", "0,0", "95,50"]
   , selectedBoard = "Pick a Board"
   }
 
@@ -43,11 +44,11 @@ update msg model =
       NoOp ->
         (model, Cmd.none)
 
-      JoinChannel ->
-        ({model | channelState = Connecting}, Cmd.none)
+      JoinBoardChannel ->
+        ({model | boardChannelState = Connecting}, Cmd.none)
 
-      LeaveChannel ->
-        ({model | channelState = Disconnecting}, Cmd.none)
+      LeaveBoardChannel ->
+        ({model | boardChannelState = Disconnecting}, Cmd.none)
 
       ReceiveBoardUpdate json ->
           case JD.decodeValue boardUpdateDecoder json of
@@ -65,29 +66,29 @@ update msg model =
             Err error ->
                 ( model, Cmd.none )
 
-      ReceiveChannelJoin json ->
+      ReceiveGridChannelJoin json ->
           case JD.decodeValue tickerUpdateDecoder json of
             Ok ticker ->
               ({model | ticker = ticker,
                 tickerSliderPosition = ticker.interval,
-                channelState = Connected }, Cmd.none)
+                gridChannelState = Connected }, Cmd.none)
 
             Err error ->
                 ( model, Cmd.none )
 
-      ReceiveChannelLeave json ->
-          ({model | channelState = Disconnected, ticker = updateTickerState Unknown model.ticker}, Cmd.none)
+      ReceiveGridChannelLeave json ->
+          ({model | gridChannelState = Disconnected, ticker = updateTickerState Unknown model.ticker}, Cmd.none)
 
       StopTicker ->
         let
-          push = Push.init "board:public" "ticker:stop"
+          push = Push.init "grid" "ticker:stop"
         in
           ({model | ticker = updateTickerState RequestingStop model.ticker},
             Phoenix.push (socketName model.flags.host) push)
 
       StartTicker ->
         let
-          push = Push.init "board:public" "ticker:start"
+          push = Push.init "grid" "ticker:start"
         in
           ({model | ticker = updateTickerState RequestingStart model.ticker},
             Phoenix.push (socketName model.flags.host) push)
@@ -95,7 +96,7 @@ update msg model =
       UpdateTickerInterval newInterval ->
         let
           newIntervalInt = Result.withDefault 0 (String.toInt newInterval)
-          push = Push.init "board:public" "ticker:interval_update"
+          push = Push.init "grid" "ticker:interval_update"
           |> Push.withPayload (JE.object [ ( "newInterval", JE.int newIntervalInt) ])
         in
           ({model | tickerSliderPosition = newIntervalInt},
@@ -112,6 +113,12 @@ update msg model =
       OnBoardSelected newSelectedBoard ->
         ({model | selectedBoard = newSelectedBoard} , Cmd.none)
 
+      ReceiveBoardChannelJoin json ->
+          ({model | boardChannelState = Connected}, Cmd.none)
+
+      ReceiveBoardChannelLeave json ->
+          ({model | boardChannelState = Disconnected}, Cmd.none)
+
 
 
 updateTickerState : TickerState -> Ticker -> Ticker
@@ -122,20 +129,38 @@ updateTickerState tickerState ticker =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  case model.channelState of
-    Connecting    -> Phoenix.connect (socket model.flags.host) [channel]
-    Connected     -> Phoenix.connect (socket model.flags.host) [channel]
-    _             -> Phoenix.connect (socket model.flags.host) []
+  let
+    channels = []
+    channels2 = case model.gridChannelState of
+      Connecting -> gridChannel :: channels
+      Connected -> gridChannel :: channels
+      _         -> channels
 
-channel : Channel.Channel Msg
-channel =
-  Channel.init "board:public"
-  |> Channel.on "board:update" ReceiveBoardUpdate
+    channels3 = case model.boardChannelState of
+      Connecting -> (boardChannel model.selectedBoard) :: channels2
+      Connected -> (boardChannel model.selectedBoard) :: channels2
+      _         -> channels2
+
+  in
+    Phoenix.connect (socket model.flags.host) channels3
+
+
+
+gridChannel : Channel.Channel Msg
+gridChannel =
+  Channel.init "grid"
   |> Channel.on "ticker:update" ReceiveTickerUpdate
-  |> Channel.onJoin ReceiveChannelJoin
-  |> Channel.onLeave ReceiveChannelLeave
+  |> Channel.onJoin ReceiveGridChannelJoin
+  |> Channel.onLeave ReceiveGridChannelLeave
   |> Channel.withDebug
 
+boardChannel : BoardId -> Channel.Channel Msg
+boardChannel boardId =
+  Channel.init ("board:" ++ boardId)
+  |> Channel.on "board:update" ReceiveBoardUpdate
+  |> Channel.onJoin ReceiveBoardChannelJoin
+  |> Channel.onLeave ReceiveBoardChannelLeave
+  |> Channel.withDebug
 
 socket : String -> Socket.Socket
 socket host =

@@ -75,8 +75,8 @@ cellStyle (x,y) =
 connectButtonView : ChannelState -> Html Msg
 connectButtonView state =
   case state of
-    Disconnected  -> button [ onClick JoinChannel, buttonClass state ]   [ text "Connect" ]
-    Connected     -> button [ onClick LeaveChannel, buttonClass state ]  [ text "Disconnect" ]
+    Disconnected  -> button [ onClick JoinBoardChannel, buttonClass state ]   [ text "Connect" ]
+    Connected     -> button [ onClick LeaveBoardChannel, buttonClass state ]  [ text "Disconnect" ]
     Connecting    -> button [ buttonClass state ] [ text "Connecting.." ]
     Disconnecting -> button [ buttonClass state ] [ text "Disonnecting.." ]
 
@@ -99,13 +99,14 @@ tickerButton state =
 controlPanelMenuView : Model -> Html Msg
 controlPanelMenuView model =
   div [ class ("control_panel " ++ (controlPanelMenuClass model.controlPanelMenuState)) ] [
-      div [ id "actions" ] [ div [ class "col-md-2 gen_number" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
+      div [ id "actions" ] [ div [ class "col-md-2 gen_number small-font marginTop5" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
+                            , div [ class "col-md-1 small-font marginTop5" ] [ text ("Status: " ++ (toString model.gridChannelState)) ]
                             , div [ class "col-md-1" ] [ selectBoard model.availableBoards ]
-                            , div [ class "col-md-1" ] [ connectButtonView model.channelState ]
+                            , div [ class "col-md-1" ] [ connectButtonView model.boardChannelState ]
                             , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
                             , div [ class "col-md-2" ] [ tickerSlider model ]
                            ]
-      , div [ class "col-md-4" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
+      , div [ class "col-md-3" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
       ]
 
 controlPanelMenuClass : ControlPanelMenuState -> String

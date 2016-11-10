@@ -4,7 +4,8 @@ import Json.Encode as JE
 
 type alias Model =
   { flags : Flags
-  , channelState : ChannelState
+  , gridChannelState : ChannelState
+  , boardChannelState : ChannelState
   , ticker : Ticker
   , board : Board
   , tickerSliderPosition : Int
@@ -28,18 +29,20 @@ type ChannelState
 
 type Msg
       = NoOp
-      | JoinChannel
-      | LeaveChannel
+      | JoinBoardChannel
+      | LeaveBoardChannel
       | ReceiveBoardUpdate JE.Value
       | ReceiveTickerUpdate JE.Value
-      | ReceiveChannelJoin JE.Value
-      | ReceiveChannelLeave JE.Value
+      | ReceiveGridChannelJoin JE.Value
+      | ReceiveGridChannelLeave JE.Value
       | StopTicker
       | StartTicker
       | UpdateTickerInterval String
       | UpdateControlPanelMenu ControlPanelMenuState
       | ToFullScreenClicked
       | OnBoardSelected BoardId
+      | ReceiveBoardChannelJoin JE.Value
+      | ReceiveBoardChannelLeave JE.Value
 
 type alias Ticker =
     { state : TickerState

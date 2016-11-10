@@ -19,7 +19,6 @@ defmodule GameOfLifeWeb do
     opts = [strategy: :one_for_one, name: GameOfLifeWeb.Supervisor]
     context = Supervisor.start_link(children, opts)
     :ok = GenEvent.add_handler(GameOfLife.EventManager, GameOfLifeWeb.EventReceiver, [])
-    spawn(fn -> GameOfLifeWeb.DummyBoard.run(100) end)
     context
   end
 

@@ -3,6 +3,7 @@ defmodule GameOfLifeWeb.UserSocket do
   require Logger
   ## Channels
   channel "board:*", GameOfLifeWeb.BoardChannel
+  channel "grid", GameOfLifeWeb.GridChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

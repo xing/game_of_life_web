@@ -1,5 +1,5 @@
 # GameOfLifeWeb
 
 ```elixir-lang
-GameOfLifeWeb.Endpoint.broadcast! "board:public", "ticker:update", %{started: false, interval: 10}
+GameOfLifeWeb.Endpoint.broadcast! "grid", "ticker:update", %{started: false, interval: 10}
 ```
