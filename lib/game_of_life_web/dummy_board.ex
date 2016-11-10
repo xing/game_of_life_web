@@ -1,15 +1,24 @@
 defmodule GameOfLifeWeb.DummyBoard do
   alias GameOfLife.Board
+  alias GameOfLife.BoardServer
   alias GameOfLifeWeb.EncodedBoard
+  alias GameOfLife.Ticker
 
+  def run(num_rand_cells) do
+     size = {95,50}
+     board = %Board{size: size, alive_cells: MapSet.new(random_cells(size, 1000))}
+     {:ok, pid} = BoardServer.start_link(size, board: board)
+     GenEvent.notify(GameOfLife.EventManager, {:board_update, board})
+     do_run(pid)
+  end
 
-  def run(num_rand_cells), do: run(%Board{size: {95,50}, alive_cells: [{1,1}, {5,3}]}, num_rand_cells)
-
-  def run(board, num_rand_cells) do
-    GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", EncodedBoard.encode(board)
-    :timer.sleep(500)
-    run(%Board{ board | generation: board.generation + 1,
-      alive_cells: random_cells(board.size, num_rand_cells)}, num_rand_cells)
+  def do_run(pid) do
+    {:ok, %Ticker{interval: interval}} = Ticker.get_state
+    :timer.sleep(interval)
+    {:ok, _ } = BoardServer.next_board_state(pid)
+    {:ok, board} = BoardServer.current_board(pid)
+    GenEvent.notify(GameOfLife.EventManager, {:board_update, board})
+    do_run(pid)
   end
 
   def random_cells(size, num_rand_cells) when num_rand_cells == 0 do
