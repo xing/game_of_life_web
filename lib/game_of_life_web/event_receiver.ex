@@ -10,6 +10,7 @@ defmodule GameOfLifeWeb.EventReceiver do
   end
 
   def handle_event({:board_update, board}, state) do
+    Logger.info "received board_update #{inspect board}"
     BoardChannel.broadcast_board_update(board)
     {:ok, state}
   end
