@@ -1,6 +1,7 @@
 defmodule GameOfLifeWeb.BoardChannel do
   use Phoenix.Channel
   alias GameOfLife.Ticker
+  alias GameOfLife.Board
   require Logger
 
   def join("board:public", message, socket) do
@@ -32,11 +33,16 @@ defmodule GameOfLifeWeb.BoardChannel do
   end
 
   def broadcast_board_update(board) do
-    GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", GameOfLifeWeb.EncodedBoard.encode(board)
+    GameOfLifeWeb.Endpoint.broadcast! "board:public", "board:update", encode(board)
   end
 
   @doc "Encodes the object as required for the browser"
   def encode(%Ticker{ticker_state: ticker_state, interval: interval}) do
     %{started: ticker_state == :started, interval: interval}
+  end
+
+  def encode(%Board{size: {width, height}}=b) do
+    alive_cells = Enum.map(b.alive_cells, fn {x,y} -> [x,y] end)
+    %{ generation: b.generation, size: [width, height], aliveCells: alive_cells }
   end
 end
