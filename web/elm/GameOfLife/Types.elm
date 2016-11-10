@@ -1,6 +1,7 @@
 module GameOfLife.Types exposing (..)
 
 import Json.Encode as JE
+import Dict
 
 type alias Model =
   { flags : Flags
@@ -65,6 +66,11 @@ type alias Board =
   , size : Point
   , aliveCells : List Point
   , origin : Point
+  , cellAttributes : Dict.Dict String CellAttribute
+  }
+
+type alias CellAttribute =
+  { age : Int
   }
 
 type alias BoardId = String

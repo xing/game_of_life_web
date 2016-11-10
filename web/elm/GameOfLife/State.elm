@@ -10,6 +10,7 @@ import Phoenix.Push as Push
 import Json.Decode as JD exposing (decodeValue)
 import String
 import Json.Encode as JE
+import Dict
 
 -- MODEL
 
@@ -23,7 +24,7 @@ model flags =
   , ticker = {state = Unknown, interval = 0}
   , gridChannelState = Connecting
   , boardChannelState = Disconnected
-  , board = {generation = 1, size = (95, 50), aliveCells = [], origin = (0, 0)}
+  , board = {generation = 1, size = (95, 50), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
   , tickerSliderPosition = 100
   , controlPanelMenuState = Displayed
   , availableBoards = ["Pick a Board", "0,0", "95,0"]

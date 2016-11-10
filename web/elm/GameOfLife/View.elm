@@ -5,6 +5,7 @@ import GameOfLife.Types exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes as A exposing (..)
+import Dict
 
 view : Model -> Html Msg
 view model =
@@ -47,12 +48,12 @@ boardView board =
   div [ class "row"]
     [div [ class "boardContainer col-md-12" ]
       [ div [ class "board", boardStyle board.size]
-          (aliveCellsView board.aliveCells board.origin)
+          (aliveCellsView board)
       ]]
 
-aliveCellsView : List Point -> Point -> List (Html Msg)
-aliveCellsView aliveCells origin =
-    List.map (aliveCellView origin) aliveCells
+aliveCellsView : Board -> List (Html Msg)
+aliveCellsView board =
+    List.map (aliveCellView board) board.aliveCells
 
 boardStyle : Point -> Attribute Msg
 boardStyle (x,y) =
@@ -61,9 +62,15 @@ boardStyle (x,y) =
     , ("height", toString(y) ++ "vw")
     ]
 
-aliveCellView : Point -> Point -> Html Msg
-aliveCellView origin cell =
-  i [class "cell fa fa-bug", cellStyle origin cell] []
+aliveCellView : Board -> Point -> Html Msg
+aliveCellView board (x,y) =
+  let
+  realAge =
+   (case (Dict.get (toString(x) ++ "," ++ toString(y)) board.cellAttributes) of
+     Just attr -> attr.age
+     Nothing -> 10)
+  in
+    i [class ("cell fa fa-square age" ++ (toString (realAge))), cellStyle board.origin (x,y)] []
 
 cellStyle : Point -> Point -> Attribute Msg
 cellStyle (initial_x, initial_y) (x,y) =

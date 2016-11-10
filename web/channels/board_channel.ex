@@ -14,6 +14,7 @@ defmodule GameOfLifeWeb.BoardChannel do
 
   def encode(%Board{size: {width, height}, origin: {x, y}}=b) do
     alive_cells = Enum.map(b.alive_cells, fn {x,y} -> [x,y] end)
-    %{ generation: b.generation, size: [width, height], aliveCells: alive_cells, origin: [x, y] }
+    cell_attributes = Enum.reduce(b.cell_attributes, %{}, fn({key, value}, acc) -> Map.put(acc, "#{elem(key, 0)},#{elem(key, 1)}", value) end)
+    %{ generation: b.generation, size: [width, height], aliveCells: alive_cells, origin: [x, y], cellAttributes: cell_attributes }
   end
 end

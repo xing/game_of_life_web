@@ -4,6 +4,7 @@ import Expect
 import GameOfLife.IO as IO
 import GameOfLife.Types exposing (..)
 import Json.Decode
+import Dict
 
 type DecoderTest output
       = Pass String output String -- Pass desc expected inputJson
@@ -13,7 +14,7 @@ all : Test
 all =
     describe "IO"
         [ testDecoder IO.boardUpdateDecoder
-          [ Pass "Minimum valid" { generation = 5, size = (5,6), aliveCells = [] } """ {"generation": 5, "size": [5,6], "aliveCells": []} """
+          [ Pass "Minimum valid" { generation = 5, size = (5,6), aliveCells = [], cellAttributes = Dict.fromList [] } """ {"generation": 5, "size": [5,6], "aliveCells": [], "cellAttributes": {} """
           , Pass "With aliveCells" { generation = 5, size = (5,6), aliveCells = [(3,4), (2,3)] } """ {"generation": 5, "size": [5,6], "aliveCells": [[3,4],[2,3]]} """
           , Fail "Missing field" """ {"size": [5,6], "aliveCells": []} """
           ]
