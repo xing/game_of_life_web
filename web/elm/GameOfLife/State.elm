@@ -26,7 +26,7 @@ model flags =
   , board = {generation = 1, size = (95, 50), aliveCells = []}
   , tickerSliderPosition = 100
   , controlPanelMenuState = Displayed
-  , availableBoards = ["Pick a Board", "0,0", "95,50"]
+  , availableBoards = ["Pick a Board", "0,0", "60,0"]
   , selectedBoard = "Pick a Board"
   }
 
