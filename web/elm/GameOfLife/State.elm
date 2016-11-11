@@ -33,7 +33,7 @@ model flags =
 
 initBoard : Board
 initBoard =
-  {generation = 1, size = (95, 50), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
+  {generation = 0, size = (0, 0), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
 
 -- UPDATE
 

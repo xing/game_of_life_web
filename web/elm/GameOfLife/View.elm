@@ -70,14 +70,32 @@ aliveCellView board (x,y) =
      Just attr -> attr.age
      Nothing -> 10)
   in
-    i [class ("cell fa fa-square age" ++ (toString (realAge))), cellStyle board.origin (x,y)] []
+    i [class "cell fa fa-square", cellStyle board.origin (x,y) realAge] []
 
-cellStyle : Point -> Point -> Attribute Msg
-cellStyle (initial_x, initial_y) (x,y) =
+cellStyle : Point -> Point -> Int -> Attribute Msg
+cellStyle (initial_x, initial_y) (x,y) age =
   style
     [ ("bottom", toString(y - initial_y) ++ "vw")
     , ("left", toString(x - initial_x) ++ "vw")
+    , ("color", hslToString( colorAlg3 age ))
     ]
+
+hslToString : (Int, Int, Int) -> String
+hslToString (h, s, l) =
+  "hsl(" ++ (toString h) ++ "," ++ (toString s) ++ "%," ++ (toString l) ++ "%)"
+
+colorAlg1 : Int -> (Int, Int, Int)
+colorAlg1 age =
+  (rem (age * 17) 255, 100, 50)
+
+colorAlg2 : Int -> (Int, Int, Int)
+colorAlg2 age =
+  (rem (round (((toFloat age) ^ 0.8) * 17)) 255, 100, 50)
+
+colorAlg3 : Int -> (Int, Int, Int)
+colorAlg3 age =
+  (150, 60, (Basics.max (60 - age * 8) 0))
+
 
 connectButtonView : ChannelState -> Html Msg
 connectButtonView state =
