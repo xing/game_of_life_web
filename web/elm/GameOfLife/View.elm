@@ -77,7 +77,7 @@ cellStyle (initial_x, initial_y) (x,y) age =
   style
     [ ("bottom", toString(y - initial_y) ++ "vw")
     , ("left", toString(x - initial_x) ++ "vw")
-    , ("color", hslToString( colorAlg3 age ))
+    , ("color", hslToString( colorAlg2 age ))
     ]
 
 hslToString : (Int, Int, Int) -> String
@@ -125,13 +125,13 @@ controlPanelMenuView : Model -> Html Msg
 controlPanelMenuView model =
   div [ class ("control_panel " ++ (controlPanelMenuClass model.controlPanelMenuState)) ] [
       div [ id "actions" ] [ div [ class "col-md-2 gen_number small-font marginTop5" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
-                            , div [ class "col-md-1 small-font marginTop5" ] [ text ("Status: " ++ (toString model.gridChannelState)) ]
+                            , div [ class "col-md-3 small-font marginTop5" ] [ kbd [] [text ("Grid channel: " ++ (toString model.gridChannelState)) ]]
                             , div [ class "col-md-1" ] [ selectBoard model.availableBoards ]
                             , div [ class "col-md-1" ] [ connectButtonView model.boardChannelState ]
                             , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
                             , div [ class "col-md-2" ] [ tickerSlider model ]
                            ]
-      , div [ class "col-md-3" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
+      , div [ class "col-md-1" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
       ]
 
 controlPanelMenuClass : ControlPanelMenuState -> String

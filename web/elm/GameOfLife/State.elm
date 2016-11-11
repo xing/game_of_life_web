@@ -84,6 +84,9 @@ update msg model =
       ReceiveGridChannelLeave json ->
           ({model | gridChannelState = Disconnected, ticker = updateTickerState Unknown model.ticker}, Cmd.none)
 
+      ReceiveGridChannelDisconnect ->
+          ({model | gridChannelState = Connecting, ticker = updateTickerState Unknown model.ticker}, Cmd.none)
+
       StopTicker ->
         let
           push = Push.init "grid" "ticker:stop"
@@ -120,6 +123,9 @@ update msg model =
 
       ReceiveBoardChannelJoin boardId json ->
           ({model | boardChannelState = Connected}, Cmd.none)
+
+      ReceiveBoardChannelDisconnect ->
+          ({model | boardChannelState = Connecting}, Cmd.none)
 
       ReceiveBoardChannelLeave boardId json ->
         -- Only disconnnect from selected board
@@ -160,6 +166,7 @@ gridChannel =
   |> Channel.on "ticker:update" ReceiveTickerUpdate
   |> Channel.onJoin ReceiveGridChannelJoin
   |> Channel.onLeave ReceiveGridChannelLeave
+  |> Channel.onDisconnect ReceiveGridChannelDisconnect
   |> Channel.withDebug
 
 boardChannel : BoardId -> Channel.Channel Msg
@@ -168,6 +175,7 @@ boardChannel boardId =
   |> Channel.on "board:update" ReceiveBoardUpdate
   |> Channel.onJoin (ReceiveBoardChannelJoin boardId)
   |> Channel.onLeave (ReceiveBoardChannelLeave boardId)
+  |> Channel.onDisconnect ReceiveBoardChannelDisconnect
   |> Channel.withDebug
 
 socket : String -> Socket.Socket

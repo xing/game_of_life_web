@@ -36,6 +36,7 @@ type Msg
       | ReceiveTickerUpdate JE.Value
       | ReceiveGridChannelJoin JE.Value
       | ReceiveGridChannelLeave JE.Value
+      | ReceiveGridChannelDisconnect
       | StopTicker
       | StartTicker
       | UpdateTickerInterval String
@@ -44,6 +45,7 @@ type Msg
       | OnBoardSelected BoardId
       | ReceiveBoardChannelJoin BoardId JE.Value
       | ReceiveBoardChannelLeave BoardId JE.Value
+      | ReceiveBoardChannelDisconnect
 
 type alias Ticker =
     { state : TickerState
