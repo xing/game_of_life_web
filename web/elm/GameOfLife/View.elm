@@ -11,18 +11,12 @@ view : Model -> Html Msg
 view model =
   div []
     [ controlPanel model
-    , boardView model.board
+    , boardView model
     ]
 
 controlPanel : Model -> Html Msg
 controlPanel model =
-  div [ class "row" ]
-    [ controlPanelMenuView model,
-      div [] [
-        span [ id "menu_icon", class "pointer fa fa-bars", onClick (UpdateControlPanelMenu model.controlPanelMenuState) ] []
-        , span [ id "fullscreen_button", class "fa fa-arrows-alt pointer marginRight15 pull-right", onClick ToFullScreenClicked ] []
-      ]
-    ]
+  div [ class "row" ] [ controlPanelMenuView model  ]
 
 tickerSlider : Model -> Html Msg
 tickerSlider model =
@@ -43,13 +37,17 @@ tickerSlider model =
         ]
     )
 
-boardView : Board -> Html Msg
-boardView board =
+boardView : Model -> Html Msg
+boardView model =
   div [ class "row"]
     [div [ class "boardContainer col-md-12" ]
-      [ div [ class "board", boardStyle board.size]
-          (aliveCellsView board)
-      ]]
+      (case model.board.size of
+        (0,0) ->  [ div [ class "noBoard" ] [text "No board data"] ]
+        _     ->  [ div [ class "fullScreenButton fa fa-2x fa-arrows-alt pull-right pointer", onClick ToFullScreenClicked] []
+                  , div [ class "board", boardStyle model.board.size] (aliveCellsView model.board)
+                  ]
+      )
+    ]
 
 aliveCellsView : Board -> List (Html Msg)
 aliveCellsView board =
@@ -97,55 +95,35 @@ colorAlg3 age =
   (150, 60, (Basics.max (60 - age * 8) 0))
 
 
-connectButtonView : ChannelState -> Html Msg
-connectButtonView state =
-  case state of
-    Disconnected  -> button [ onClick JoinBoardChannel, buttonClass state ]   [ text "Connect" ]
-    Connected     -> button [ onClick LeaveBoardChannel, buttonClass state ]  [ text "Disconnect" ]
-    Connecting    -> button [ buttonClass state ] [ text "Connecting.." ]
-    Disconnecting -> button [ buttonClass state ] [ text "Disonnecting.." ]
-
-buttonClass : ChannelState -> Attribute Msg
-buttonClass state =
-  class (case state of
-          Disconnected  -> "btn btn-success"
-          Connected     -> "btn btn-danger"
-          _             -> "btn btn-warning")
-
 tickerButton : TickerState -> Html Msg
 tickerButton state =
-  case state of
-    Started -> button [ class "btn btn-danger", onClick StopTicker ] [text "Stop"]
-    RequestingStop -> button [ class "btn btn-warning", onClick StopTicker ] [text "Requesting stop"]
-    Stopped -> button [ class "btn btn-success", onClick StartTicker ] [text "Start"]
-    RequestingStart -> button [ class "btn btn-warning", onClick StartTicker ] [text "Requesting start"]
-    _       -> button [ class "hide" ] []
+  let
+    (buttonClass, msg) =
+      case state of
+        Started         -> ("btn-danger  fa-pause", StopTicker)
+        RequestingStop  -> ("btn-warning fa-pause", StopTicker)
+        Stopped         -> ("btn-success fa-play",  StartTicker)
+        RequestingStart -> ("btn-warning fa-play",  StartTicker)
+        _               -> ("hide", NoOp)
+  in
+    button [ class ("btn fa " ++ buttonClass), onClick msg ] []
 
 controlPanelMenuView : Model -> Html Msg
 controlPanelMenuView model =
-  div [ class ("control_panel " ++ (controlPanelMenuClass model.controlPanelMenuState)) ] [
-      div [ id "actions" ] [ div [ class "col-md-2 gen_number small-font marginTop5" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
-                            , div [ class "col-md-3 small-font marginTop5" ] [ kbd [] [text ("Grid channel: " ++ (toString model.gridChannelState)) ]]
-                            , div [ class "col-md-1" ] [ selectBoard model.availableBoards ]
-                            , div [ class "col-md-1" ] [ connectButtonView model.boardChannelState ]
-                            , div [ class "col-md-2" ] [ tickerButton model.ticker.state ]
-                            , div [ class "col-md-2" ] [ tickerSlider model ]
-                           ]
-      , div [ class "col-md-1" ] [ a [class "fa fa-times pointer pull-right", onClick (UpdateControlPanelMenu Displayed)] [] ]
-      ]
-
-controlPanelMenuClass : ControlPanelMenuState -> String
-controlPanelMenuClass controlPanelMenuState =
-  case controlPanelMenuState of
-    Displayed -> "with_height"
-    Hidden -> "no_height"
+  div [ class "control_panel" ]
+    [ div [ class "col-md-2 info" ] [ kbd [] [text ("Grid: " ++ (toString model.gridChannelState)) ]]
+    , div [ class "col-md-2 info" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
+    , div [ class "col-md-1" ] [ tickerButton model.ticker.state ]
+    , div [ class "col-md-1" ] [ tickerSlider model ]
+    , div [ class "col-md-1" ] []
+    , div [ class "col-md-2 info" ] [ kbd [] [text ("Board: " ++ (toString model.boardChannelState)) ]]
+    , div [ class "col-md-3" ] [ selectBoard model.availableBoards ]
+    ]
 
 selectBoard : List String -> Html Msg
 selectBoard availableBoards =
   select [ class "form-control", id "board-select", onInput OnBoardSelected ]
     ( availableBoardsOptions availableBoards )
-
-
 
 availableBoardsOptions : List BoardId -> List (Html Msg)
 availableBoardsOptions availableBoards =

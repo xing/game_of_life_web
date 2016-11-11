@@ -10,7 +10,6 @@ type alias Model =
   , ticker : Ticker
   , board : Board
   , tickerSliderPosition : Int
-  , controlPanelMenuState : ControlPanelMenuState
   , availableBoards : List BoardId
   , selectedBoard : BoardId
   }
@@ -40,7 +39,6 @@ type Msg
       | StopTicker
       | StartTicker
       | UpdateTickerInterval String
-      | UpdateControlPanelMenu ControlPanelMenuState
       | ToFullScreenClicked
       | OnBoardSelected BoardId
       | ReceiveBoardChannelJoin BoardId JE.Value
@@ -58,10 +56,6 @@ type TickerState
     | RequestingStop
     | RequestingStart
     | Unknown
-
-type ControlPanelMenuState
-    = Displayed
-    | Hidden
 
 type alias Board =
   { generation : Int

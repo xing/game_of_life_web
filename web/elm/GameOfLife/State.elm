@@ -26,7 +26,6 @@ model flags =
   , boardChannelState = Connecting
   , board = initBoard
   , tickerSliderPosition = 100
-  , controlPanelMenuState = Displayed
   , availableBoards = ["0,0","95,0","190,0","0,50","95,50","190,50","0,100","95,100","190,100"]
   , selectedBoard = "0,0"
   }
@@ -109,11 +108,6 @@ update msg model =
         in
           ({model | tickerSliderPosition = newIntervalInt},
             Phoenix.push (socketName model.flags.host) push)
-
-      UpdateControlPanelMenu controlPanelMenuState ->
-        case controlPanelMenuState of
-          Displayed -> ({model | controlPanelMenuState = Hidden}, Cmd.none)
-          Hidden -> ({model | controlPanelMenuState = Displayed}, Cmd.none)
 
       ToFullScreenClicked ->
         (model, requestFullScreen "on")

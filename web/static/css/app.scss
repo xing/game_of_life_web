@@ -8,8 +8,6 @@
   outline-style: solid;
   outline-color: black;
   outline-width: 2px;
-  //font-size: 200%;
-  //background-size: 1vw 1vw;
   background-image: repeating-linear-gradient(0deg, #d9d9d9, #d9d9d9 1px, transparent 1px, transparent 1em),repeating-linear-gradient(-90deg, #d9d9d9, #d9d9d9 1px, transparent 1px, transparent 1em);
 
   .cell {
@@ -17,63 +15,35 @@
   }
 }
 
+
+.boardContainer .fullScreenButton {
+    margin-right: -14px;
+}
+
+.noBoard {
+  font-size: 200%;
+  text-align: center;
+  margin: 2vw;
+}
+
 #elm-container {
-  padding-top: 20px;
   font-size: 1vw ;
 }
 
 .control_panel {
-  height: 0px;
+  height: 45px;
   width: 100%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
   background-color: #d9d9d9;
-  overflow-y: hidden;
-  transition: 0.5s;
+  padding-top: 5px;
 
-  .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
+  .info {
+    margin-top: 7px;
   }
-}
-
-#menu_icon {
-  margin-left: 3vw;
+  .btn {
+    margin-top: 4px;
+  }
 }
 
 .pointer {
   cursor:pointer
-}
-
-.no_height {
-  height: 0px;
-}
-
-.with_height {
-  height: 59px;
-}
-
-.marginRight15 {
-  margin-right: 2vw;
-}
-
-#actions {
-  padding-top: 14px;
-
-  .gen_number {
-    padding-left: 34px;
-  }
-}
-
-.marginTop5 {
-  margin-top: 5px;
-}
-
-.small-font {
-  font-size: 14px;
 }
