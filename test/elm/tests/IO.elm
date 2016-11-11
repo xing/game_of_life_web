@@ -14,8 +14,8 @@ all : Test
 all =
     describe "IO"
         [ testDecoder IO.boardUpdateDecoder
-          [ Pass "Minimum valid" { generation = 5, size = (5,6), aliveCells = [], cellAttributes = Dict.fromList [] } """ {"generation": 5, "size": [5,6], "aliveCells": [], "cellAttributes": {} """
-          , Pass "With aliveCells" { generation = 5, size = (5,6), aliveCells = [(3,4), (2,3)] } """ {"generation": 5, "size": [5,6], "aliveCells": [[3,4],[2,3]]} """
+          [ Pass "Minimum valid"   { generation = 5, size = (5,6), origin = (1,2), aliveCells = [], cellAttributes = Dict.fromList [] } """ {"generation": 5, "size": [5,6], "origin": [1,2], "aliveCells": [], "cellAttributes": {}} """
+          , Pass "With aliveCells" { generation = 5, size = (5,6), origin = (1,2), aliveCells = [(3,4), (2,3)], cellAttributes = Dict.fromList [("3,4",{ age = 5 })] } """ {"generation": 5, "size": [5,6], "origin": [1,2], "aliveCells": [[3,4],[2,3]], "cellAttributes": {"3,4": {"age": 5}}} """
           , Fail "Missing field" """ {"size": [5,6], "aliveCells": []} """
           ]
         , testDecoder IO.tickerUpdateDecoder
