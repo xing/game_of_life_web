@@ -1,12 +1,13 @@
 defmodule GameOfLifeWeb.GridChannel do
   use Phoenix.Channel
-  alias GameOfLife.Ticker
+  alias GameOfLife.{Ticker, Grid, GridManager}
   require Logger
 
   def join("grid", message, socket) do
     Logger.info "join grid: #{inspect message}"
     {:ok, ticker} = Ticker.get_state
-    {:ok, encode(ticker), socket}
+    {:ok, %Grid{boards: boards}} = GridManager.get_state
+    {:ok, %{ticker: encode(ticker), boards: encode(boards)}, socket}
   end
 
   def handle_in("ticker:stop", _, socket) do
@@ -33,4 +34,8 @@ defmodule GameOfLifeWeb.GridChannel do
     %{started: ticker_state == :started, interval: interval}
   end
 
+  def encode([]), do: []
+  def encode([{_x, _y} | _t]=points) do
+    Enum.map(points, fn {x,y} -> [x,y] end)
+  end
 end

@@ -2,6 +2,7 @@ port module GameOfLife.State exposing (init, update, subscriptions)
 
 import GameOfLife.Types exposing(..)
 import GameOfLife.IO exposing(..)
+import GameOfLife.Helpers exposing(..)
 
 import Phoenix
 import Phoenix.Socket as Socket
@@ -26,8 +27,8 @@ model flags =
   , boardChannelState = Connecting
   , board = initBoard
   , tickerSliderPosition = 100
-  , availableBoards = ["0,0","95,0","190,0","0,50","95,50","190,50","0,100","95,100","190,100"]
-  , selectedBoard = "0,0"
+  , availableBoards = [(0,0)]
+  , selectedBoard = (0,0)
   }
 
 initBoard : Board
@@ -71,11 +72,13 @@ update msg model =
                 ( model, Cmd.none )
 
       ReceiveGridChannelJoin json ->
-          case JD.decodeValue tickerUpdateDecoder json of
-            Ok ticker ->
-              ({model | ticker = ticker,
-                tickerSliderPosition = ticker.interval,
-                gridChannelState = Connected }, Cmd.none)
+          case JD.decodeValue gridJoinResponseDecoder json of
+            Ok (boards, ticker) ->
+              ({model | ticker = ticker
+                      , availableBoards = boards
+                      , tickerSliderPosition = ticker.interval
+                      , gridChannelState = Connected },
+              Cmd.none)
 
             Err error ->
                 ( model, Cmd.none )
@@ -165,7 +168,7 @@ gridChannel =
 
 boardChannel : BoardId -> Channel.Channel Msg
 boardChannel boardId =
-  Channel.init ("board:" ++ boardId)
+  Channel.init ("board:" ++ boardIdToString(boardId))
   |> Channel.on "board:update" ReceiveBoardUpdate
   |> Channel.onJoin (ReceiveBoardChannelJoin boardId)
   |> Channel.onLeave (ReceiveBoardChannelLeave boardId)

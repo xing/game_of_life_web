@@ -1,6 +1,7 @@
 module GameOfLife.View exposing (view)
 
 import GameOfLife.Types exposing (..)
+import GameOfLife.Helpers exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -120,15 +121,15 @@ controlPanelMenuView model =
     , div [ class "col-md-3" ] [ selectBoard model.availableBoards ]
     ]
 
-selectBoard : List String -> Html Msg
+selectBoard : List BoardId -> Html Msg
 selectBoard availableBoards =
-  select [ class "form-control", id "board-select", onInput OnBoardSelected ]
+  select [ class "form-control", id "board-select", onInput (\s -> OnBoardSelected (stringToBoardId s))]
     ( availableBoardsOptions availableBoards )
 
 availableBoardsOptions : List BoardId -> List (Html Msg)
 availableBoardsOptions availableBoards =
   List.map availableBoard availableBoards
 
-availableBoard : String -> Html Msg
+availableBoard : BoardId -> Html Msg
 availableBoard availableBoard =
-  option [] [ text availableBoard ]
+  option [] [ text (boardIdToString availableBoard) ]

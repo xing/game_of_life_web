@@ -31,6 +31,17 @@ pointDecoder : JD.Decoder Point
 pointDecoder =
   JD.tuple2 (,) JD.int JD.int
 
+
+gridJoinResponseDecoder : JD.Decoder (List BoardId, Ticker)
+gridJoinResponseDecoder =
+  JD.object2 (,)
+    ("boards" := boardsDecoder)
+    ("ticker" := tickerUpdateDecoder)
+
+
+boardsDecoder : JD.Decoder (List BoardId)
+boardsDecoder = JD.list pointDecoder
+
 tickerUpdateDecoder : JD.Decoder Ticker
 tickerUpdateDecoder =
   JD.object2 buildTicker

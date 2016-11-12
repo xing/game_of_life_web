@@ -69,4 +69,4 @@ type alias CellAttribute =
   { age : Int
   }
 
-type alias BoardId = String
+type alias BoardId = Point
