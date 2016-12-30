@@ -27,7 +27,7 @@ tickerSlider model =
         []
       _ ->
         [ input
-            [ type' "range"
+            [ type_ "range"
             , A.min "0"
             , A.max "1000"
             , A.step "20"
@@ -64,10 +64,10 @@ boardStyle (x,y) =
 aliveCellView : Board -> Point -> Html Msg
 aliveCellView board (x,y) =
   let
-  realAge =
-   (case (Dict.get (toString(x) ++ "," ++ toString(y)) board.cellAttributes) of
-     Just attr -> attr.age
-     Nothing -> 10)
+    realAge =
+     (case (Dict.get (toString(x) ++ "," ++ toString(y)) board.cellAttributes) of
+       Just attr -> attr.age
+       Nothing -> 10)
   in
     i [class "cell fa fa-square", cellStyle board.origin (x,y) realAge] []
 

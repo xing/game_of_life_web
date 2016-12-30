@@ -2,12 +2,12 @@ module App exposing (..)
 
 import GameOfLife.State as State
 import GameOfLife.View as View
-import GameOfLife.Types exposing (Flags)
-import Html.App
+import GameOfLife.Types exposing (Flags, Model, Msg)
+import Html
 
-main : Program Flags
+main : Program Flags Model Msg
 main =
-    Html.App.programWithFlags
+  Html.programWithFlags
         { init = State.init
         , update = State.update
         , subscriptions = State.subscriptions

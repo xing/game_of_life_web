@@ -2,17 +2,17 @@ module GameOfLife.IO exposing (..)
 
 import GameOfLife.Types exposing (..)
 
-import Json.Decode as JD exposing ((:=))
+import Json.Decode as JD exposing (field, index)
 import Dict
 
 boardUpdateDecoder : JD.Decoder Board
 boardUpdateDecoder =
-    JD.object5 Board
-        ("generation" := JD.int)
-        ("size" := pointDecoder)
-        ("aliveCells" := JD.list pointDecoder)
-        ("origin" := pointDecoder)
-        ("cellAttributes" := cellAttributesDecoder)
+    JD.map5 Board
+        (field "generation" JD.int)
+        (field "size" pointDecoder)
+        (field "aliveCells" (JD.list pointDecoder))
+        (field "origin" pointDecoder)
+        (field "cellAttributes" cellAttributesDecoder)
 
 cellAttributesDecoder : JD.Decoder (Dict.Dict String CellAttribute)
 cellAttributesDecoder =
@@ -20,8 +20,8 @@ cellAttributesDecoder =
 
 cellAttributeDecoder : JD.Decoder CellAttribute
 cellAttributeDecoder =
-  JD.object1 buildCellAttribute
-      ("age" := JD.int)
+  JD.map buildCellAttribute
+      (field "age" JD.int)
 
 buildCellAttribute : Int -> CellAttribute
 buildCellAttribute age =
@@ -29,14 +29,14 @@ buildCellAttribute age =
 
 pointDecoder : JD.Decoder Point
 pointDecoder =
-  JD.tuple2 (,) JD.int JD.int
+  JD.map2 (,) (index 0 JD.int) (index 1 JD.int)
 
 
 gridJoinResponseDecoder : JD.Decoder (List BoardId, Ticker)
 gridJoinResponseDecoder =
-  JD.object2 (,)
-    ("boards" := boardsDecoder)
-    ("ticker" := tickerUpdateDecoder)
+  JD.map2 (,)
+    (field "boards" boardsDecoder)
+    (field "ticker" tickerUpdateDecoder)
 
 
 boardsDecoder : JD.Decoder (List BoardId)
@@ -44,9 +44,9 @@ boardsDecoder = JD.list pointDecoder
 
 tickerUpdateDecoder : JD.Decoder Ticker
 tickerUpdateDecoder =
-  JD.object2 buildTicker
-      ("started" := JD.bool)
-      ("interval" := JD.int)
+  JD.map2 buildTicker
+      (field "started" JD.bool)
+      (field "interval" JD.int)
 
 buildTicker : Bool -> Int -> Ticker
 buildTicker started interval =

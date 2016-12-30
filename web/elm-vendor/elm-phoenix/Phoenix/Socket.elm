@@ -1,55 +1,51 @@
-module Phoenix.Socket exposing (Socket, Connection(..), init, heartbeatIntervallSeconds, withoutHeartbeat, reconnectTimer, withParams, withDebug)
+module Phoenix.Socket exposing (Socket, init, heartbeatIntervallSeconds, withoutHeartbeat, reconnectTimer, withParams, withDebug, onClose, onAbnormalClose, onNormalClose)
 
 {-| A socket declares to which endpoint a socket connection should be established.
 
 # Definition
-@docs Socket, Connection
+@docs Socket
 
 # Helpers
-@docs init, withParams, heartbeatIntervallSeconds, withoutHeartbeat, reconnectTimer, withDebug
+@docs init, withParams, heartbeatIntervallSeconds, withoutHeartbeat, reconnectTimer, withDebug, onAbnormalClose, onNormalClose, onClose
 -}
 
-import Process
 import Time exposing (Time)
-import WebSocket.LowLevel as WS
 
 
 {-| Representation of a Socket connection
-
-**Note**: You should use the helper functions to construct a socket.
 -}
-type alias Socket =
+type alias Socket msg =
+    PhoenixSocket msg
+
+
+type alias PhoenixSocket msg =
     { endpoint : String
     , params : List ( String, String )
     , heartbeatIntervall : Time
     , withoutHeartbeat : Bool
-    , connection : Connection
     , reconnectTimer : Int -> Float
     , debug : Bool
+    , onClose : Maybe ({ code : Int, reason : String, wasClean : Bool } -> msg)
+    , onAbnormalClose : Maybe msg
+    , onNormalClose : Maybe msg
     }
-
-
-{-| The underlying low-level socket connection. This is completely handled by the effect manager.
--}
-type Connection
-    = Closed
-    | Opening Int Process.Id
-    | Connected WS.WebSocket Int
 
 
 {-| Initialize a Socket connection with an endpoint.
 
     init "ws://localhost:4000/socket/websocket"
 -}
-init : String -> Socket
+init : String -> Socket msg
 init endpoint =
     { endpoint = endpoint
     , params = []
     , heartbeatIntervall = 30 * Time.second
     , withoutHeartbeat = False
-    , connection = Closed
     , reconnectTimer = defaultReconnectTimer
     , debug = False
+    , onClose = Nothing
+    , onAbnormalClose = Nothing
+    , onNormalClose = Nothing
     }
 
 
@@ -58,17 +54,17 @@ init endpoint =
     init "ws://localhost:4000/socket/websocket"
         |> withParams [("token", "GYMXZwXzKFzfxyGntVkYt7uAJnscVnFJ")]
 -}
-withParams : List ( String, String ) -> Socket -> Socket
+withParams : List ( String, String ) -> Socket msg -> Socket msg
 withParams params socket =
     { socket | params = params }
 
 
-{-| The client regularly sends a heartbeat to the server. With this function you can specify the intervall in which the heartbeats are send. By default it's 30 seconds.
+{-| The client regularly sends a heartbeat to the server. With this function you can specify the intervall in which the heartbeats are send. By default it_s 30 seconds.
 
     init "ws://localhost:4000/socket/websocket"
         |> heartbeatIntervallSeconds 60
 -}
-heartbeatIntervallSeconds : Int -> Socket -> Socket
+heartbeatIntervallSeconds : Int -> Socket msg -> Socket msg
 heartbeatIntervallSeconds intervall socket =
     { socket | heartbeatIntervall = (toFloat intervall) * Time.second }
 
@@ -78,7 +74,7 @@ heartbeatIntervallSeconds intervall socket =
     init "ws://localhost:4000/socket/websocket"
         |> withoutHeartbeat
 -}
-withoutHeartbeat : Socket -> Socket
+withoutHeartbeat : Socket msg -> Socket msg
 withoutHeartbeat socket =
     { socket | withoutHeartbeat = True }
 
@@ -93,16 +89,44 @@ withoutHeartbeat socket =
 
 With this function you can specify a custom strategy.
 -}
-reconnectTimer : (Int -> Time) -> Socket -> Socket
+reconnectTimer : (Int -> Time) -> Socket msg -> Socket msg
 reconnectTimer timerFunc socket =
     { socket | reconnectTimer = timerFunc }
 
 
 {-| Enable debug logs for the socket. Every incoming and outgoing message will be printed.
 -}
-withDebug : Socket -> Socket
+withDebug : Socket msg -> Socket msg
 withDebug socket =
     { socket | debug = True }
+
+
+{-| Set a callback which will be called if the socket connection got closed abnormal, i.e., if the server declined the socket authentication. So this callback is useful for updating query params like access tokens.
+
+    type Msg =
+        RefreshAccessToken | ...
+
+        init "ws://localhost:4000/socket/websocket"
+            |> withParams [ ( "accessToken", "abc123" ) ]
+            |> onAbnormalClose RefreshAccessToken
+-}
+onAbnormalClose : msg -> Socket msg -> Socket msg
+onAbnormalClose onAbnormalClose_ socket =
+    { socket | onAbnormalClose = Just onAbnormalClose_ }
+
+
+{-| Set a callback which will be called if the socket connection got closed normal. Useful if you have to do some additional clean up.
+-}
+onNormalClose : msg -> Socket msg -> Socket msg
+onNormalClose onNormalClose_ socket =
+    { socket | onNormalClose = Just onNormalClose_ }
+
+
+{-| Set a callback which will be called if the socket connection got closed. You can learn more about the code [here](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent).
+-}
+onClose : ({ code : Int, reason : String, wasClean : Bool } -> msg) -> Socket msg -> Socket msg
+onClose onClose_ socket =
+    { socket | onClose = Just onClose_ }
 
 
 defaultReconnectTimer : Int -> Time

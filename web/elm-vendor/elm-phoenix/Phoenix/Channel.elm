@@ -1,12 +1,12 @@
-module Phoenix.Channel exposing (Channel, State(..), init, withPayload, onJoin, onRejoin, onJoinError, onError, onDisconnect, on, onLeave, onLeaveError, withDebug)
+module Phoenix.Channel exposing (Channel, init, withPayload, onJoin, onRejoin, onJoinError, onError, onDisconnect, on, onLeave, onLeaveError, withDebug)
 
 {-| A channel declares which topic should be joined, registers event handlers and has various callbacks for possible lifecycle events.
 
 # Definition
-@docs Channel, State
+@docs Channel
 
 # Helpers
-@docs init, withPayload, on, onJoin, onJoinError, onDisconnect, onRejoin, onLeave, onLeaveError, withDebug
+@docs init, withPayload, on, onJoin, onJoinError, onError, onDisconnect, onRejoin, onLeave, onLeaveError, withDebug
 
 -}
 
@@ -18,10 +18,12 @@ import Json.Decode as Decode exposing (Value)
 
 
 {-| Representation of a Phoenix Channel
-
-**Note**: You should use the helper functions to construct a channel.
 -}
 type alias Channel msg =
+    PhoenixChannel msg
+
+
+type alias PhoenixChannel msg =
     { topic : String
     , payload : Maybe Value
     , onJoin : Maybe (Value -> msg)
@@ -33,18 +35,7 @@ type alias Channel msg =
     , onLeaveError : Maybe (Value -> msg)
     , on : Dict String (Value -> msg)
     , debug : Bool
-    , state : State
     }
-
-
-{-| The current channel state. This is completely handled by the effect manager.
--}
-type State
-    = Closed
-    | Joining
-    | Joined
-    | Errored
-    | Disconnected
 
 
 {-| Initialize a channel to a given topic.
@@ -64,7 +55,6 @@ init topic =
     , onLeaveError = Nothing
     , on = Dict.empty
     , debug = False
-    , state = Closed
     }
 
 
@@ -77,8 +67,8 @@ init topic =
         |> withPayload payload
 -}
 withPayload : Value -> Channel msg -> Channel msg
-withPayload payload' chan =
-    { chan | payload = Just payload' }
+withPayload payload_ chan =
+    { chan | payload = Just payload_ }
 
 
 {-| Register an event handler for a event.
@@ -102,13 +92,13 @@ on event cb chan =
         |> onJoin IsOnline
 -}
 onJoin : (Value -> msg) -> Channel msg -> Channel msg
-onJoin onJoin' chan =
+onJoin onJoin_ chan =
     case chan.onRejoin of
         Nothing ->
-            { chan | onJoin = Just onJoin', onRejoin = Just onJoin' }
+            { chan | onJoin = Just onJoin_, onRejoin = Just onJoin_ }
 
         Just _ ->
-            { chan | onJoin = Just onJoin' }
+            { chan | onJoin = Just onJoin_ }
 
 
 {-| Set a callback which will be called if the server declined your request to join the channel.
@@ -119,11 +109,11 @@ onJoin onJoin' chan =
     init "room:lobby"
         |> onJoinError CouldNotJoin
 
-**Note**: If a channel declined a request to join a topic the effect manager won't try again.
+**Note**: If a channel declined a request to join a topic the effect manager won_t try again.
 -}
 onJoinError : (Value -> msg) -> Channel msg -> Channel msg
-onJoinError onJoinError' chan =
-    { chan | onJoinError = Just onJoinError' }
+onJoinError onJoinError_ chan =
+    { chan | onJoinError = Just onJoinError_ }
 
 
 {-| Set a callback which will be called if the channel process on the server crashed. The effect manager will automatically rejoin the channel after a crash.
@@ -135,8 +125,8 @@ onJoinError onJoinError' chan =
         |> onError ChannelCrashed
 -}
 onError : msg -> Channel msg -> Channel msg
-onError onError' chan =
-    { chan | onError = Just onError' }
+onError onError_ chan =
+    { chan | onError = Just onError_ }
 
 
 {-| Set a callback which will be called if the socket connection got interrupted. Useful to switch the online status to offline.
@@ -150,8 +140,8 @@ onError onError' chan =
 **Note**: The effect manager will automatically try to reconnect to the server and to rejoin the channel. See `onRejoin` for details.
 -}
 onDisconnect : msg -> Channel msg -> Channel msg
-onDisconnect onDisconnect' chan =
-    { chan | onDisconnect = Just onDisconnect' }
+onDisconnect onDisconnect_ chan =
+    { chan | onDisconnect = Just onDisconnect_ }
 
 
 {-| Set a callback which will be called after you sucessfully rejoined the channel after a disconnect. Useful if you want to catch up missed messages.
@@ -163,8 +153,8 @@ onDisconnect onDisconnect' chan =
         |> onRejoin IsOnline
 -}
 onRejoin : (Value -> msg) -> Channel msg -> Channel msg
-onRejoin onRejoin' chan =
-    { chan | onRejoin = Just onRejoin' }
+onRejoin onRejoin_ chan =
+    { chan | onRejoin = Just onRejoin_ }
 
 
 {-| Set a callback which will be called after you sucessfully left a channel.
@@ -176,16 +166,16 @@ onRejoin onRejoin' chan =
         |> onLeave LeftLobby
 -}
 onLeave : (Value -> msg) -> Channel msg -> Channel msg
-onLeave onLeave' chan =
-    { chan | onLeave = Just onLeave' }
+onLeave onLeave_ chan =
+    { chan | onLeave = Just onLeave_ }
 
 
 {-| Set a callback which will be called if the server declined your request to left a channel.
-*(It seems that Phoenix v1.2 doesn't send this)*
+*(It seems that Phoenix v1.2 doesn_t send this)*
 -}
 onLeaveError : (Value -> msg) -> Channel msg -> Channel msg
-onLeaveError onLeaveError' chan =
-    { chan | onLeaveError = Just onLeaveError' }
+onLeaveError onLeaveError_ chan =
+    { chan | onLeaveError = Just onLeaveError_ }
 
 
 {-| Print all status changes.

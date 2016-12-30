@@ -175,7 +175,7 @@ boardChannel boardId =
   |> Channel.onDisconnect ReceiveBoardChannelDisconnect
   |> Channel.withDebug
 
-socket : String -> Socket.Socket
+socket : String -> Socket.Socket Msg
 socket host =
   Socket.init (socketName host)
 
