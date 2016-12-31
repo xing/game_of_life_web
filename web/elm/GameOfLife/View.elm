@@ -12,7 +12,7 @@ view : Model -> Html Msg
 view model =
   div []
     [ controlPanel model
-    , boardView model
+    , boardView model.board
     ]
 
 controlPanel : Model -> Html Msg
@@ -38,14 +38,15 @@ tickerSlider model =
         ]
     )
 
-boardView : Model -> Html Msg
-boardView model =
+boardView : Maybe Board -> Html Msg
+boardView maybeBoard =
   div [ class "row"]
     [div [ class "boardContainer col-md-12" ]
-      (case model.board.size of
-        (0,0) ->  [ div [ class "noBoard" ] [text "No board data"] ]
-        _     ->  [ div [ class "fullScreenButton fa fa-2x fa-arrows-alt pull-right pointer", onClick ToFullScreenClicked] []
-                  , div [ class "board", boardStyle model.board.size] (aliveCellsView model.board)
+      (case maybeBoard of
+        Nothing     ->  [ div [ class "noBoard" ] [text "No board data"] ]
+        Just board  ->  [ div [ class "fullScreenButton fa fa-2x fa-arrows-alt pull-right pointer"
+                              , onClick ToFullScreenClicked] []
+                  , div [ class "board", boardStyle board.size] (aliveCellsView board)
                   ]
       )
     ]
@@ -111,15 +112,20 @@ tickerButton state =
 
 controlPanelMenuView : Model -> Html Msg
 controlPanelMenuView model =
-  div [ class "control_panel" ]
-    [ div [ class "col-md-2 info" ] [ kbd [] [text ("Grid: " ++ (toString model.gridChannelState)) ]]
-    , div [ class "col-md-2 info" ] [ kbd [] [text ("Generation: " ++ (toString model.board.generation)) ] ]
-    , div [ class "col-md-1" ] [ tickerButton model.ticker.state ]
-    , div [ class "col-md-1" ] [ tickerSlider model ]
-    , div [ class "col-md-1" ] []
-    , div [ class "col-md-2 info" ] [ kbd [] [text ("Board: " ++ (toString model.boardChannelState)) ]]
-    , div [ class "col-md-3" ] [ selectBoard model.availableBoards ]
-    ]
+  let
+    generation = case model.board of
+      Nothing -> ""
+      Just board -> board.generation |> toString
+  in
+    div [ class "control_panel" ]
+      [ div [ class "col-md-2 info" ] [ kbd [] [text ("Grid: " ++ (toString model.gridChannelState)) ]]
+      , div [ class "col-md-2 info" ] [ kbd [] [text ("Generation: " ++ generation) ] ]
+      , div [ class "col-md-1" ] [ tickerButton model.ticker.state ]
+      , div [ class "col-md-1" ] [ tickerSlider model ]
+      , div [ class "col-md-1" ] []
+      , div [ class "col-md-2 info" ] [ kbd [] [text ("Board: " ++ (toString model.boardChannelState)) ]]
+      , div [ class "col-md-3" ] [ selectBoard model.availableBoards ]
+      ]
 
 selectBoard : List BoardId -> Html Msg
 selectBoard availableBoards =

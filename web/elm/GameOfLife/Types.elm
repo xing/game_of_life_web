@@ -8,7 +8,7 @@ type alias Model =
   , gridChannelState : ChannelState
   , boardChannelState : ChannelState
   , ticker : Ticker
-  , board : Board
+  , board : Maybe Board
   , tickerSliderPosition : Int
   , availableBoards : List BoardId
   , selectedBoard : BoardId

@@ -12,7 +12,6 @@ import Phoenix.Push as Push
 import Json.Decode as JD exposing (decodeValue)
 import String
 import Json.Encode as JE
-import Dict
 
 -- MODEL
 
@@ -26,15 +25,11 @@ model flags =
   , ticker = {state = Unknown, interval = 0}
   , gridChannelState = Connecting
   , boardChannelState = Connecting
-  , board = initBoard
+  , board = Nothing
   , tickerSliderPosition = 100
   , availableBoards = [(0,0)]
   , selectedBoard = (0,0)
   }
-
-initBoard : Board
-initBoard =
-  {generation = 0, size = (0, 0), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
 
 -- UPDATE
 
@@ -57,7 +52,7 @@ update msg model =
       ReceiveBoardUpdate json ->
           case JD.decodeValue boardUpdateDecoder json of
             Ok board ->
-              ({model | board = board}, Cmd.none)
+              ({model | board = Just board}, Cmd.none)
 
             Err error ->
                 ( model, Cmd.none )
@@ -115,7 +110,7 @@ update msg model =
         (model, Ports.requestFullScreen "on")
 
       OnBoardSelected newSelectedBoard ->
-        ({model | selectedBoard = newSelectedBoard, board = initBoard} , Cmd.none)
+        ({model | selectedBoard = newSelectedBoard, board = Nothing} , Cmd.none)
 
       ReceiveBoardChannelJoin boardId json ->
           ({model | boardChannelState = Connected}, Cmd.none)
