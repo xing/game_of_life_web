@@ -1,8 +1,9 @@
-port module GameOfLife.State exposing (init, update, subscriptions)
+module GameOfLife.State exposing (init, update, subscriptions)
 
 import GameOfLife.Types exposing(..)
 import GameOfLife.IO exposing(..)
 import GameOfLife.Helpers exposing(..)
+import GameOfLife.Ports as Ports
 
 import Phoenix
 import Phoenix.Socket as Socket
@@ -36,8 +37,6 @@ initBoard =
   {generation = 0, size = (0, 0), aliveCells = [], origin = (0, 0), cellAttributes = Dict.empty }
 
 -- UPDATE
-
-port requestFullScreen : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -113,7 +112,7 @@ update msg model =
             Phoenix.push (socketName model.flags.host) push)
 
       ToFullScreenClicked ->
-        (model, requestFullScreen "on")
+        (model, Ports.requestFullScreen "on")
 
       OnBoardSelected newSelectedBoard ->
         ({model | selectedBoard = newSelectedBoard, board = initBoard} , Cmd.none)
